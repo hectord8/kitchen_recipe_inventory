@@ -21,9 +21,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <nav>
-          <Link href="/">Home</Link>
-          <Link href="/login">Login</Link>
-          <Link href="/CreateAccount">create</Link>
+          <Link className="link" href="/">Home</Link>
+          <Link className="link" href="/login">Login</Link>
+          <Link className="link"href="/CreateAccount">create</Link>
         </nav>
         {children}
       </body>

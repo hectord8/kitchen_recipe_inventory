@@ -3,14 +3,13 @@
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 
-const API = "http://localhost:8080/Customers/";
+const API = "http://localhost:8080/Customers/register";
 
 export default function CreateAccount() {
-  const [customers, setCustomers] = useState([]); 
   const [error, setError] = useState("");
 
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [PassWord,  setPassWord] = useState("");
   const [email, setEmail] = useState("");
 
 
@@ -21,14 +20,15 @@ export default function CreateAccount() {
     const res = await fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName, lastName, email }),
+      body: JSON.stringify({ firstName, PassWord, email }),
+       credentials: "include"
     });
-
+    console.log(res.ok);
     if (!res.ok) throw new Error(`POST failed: ${res.status}`);
 
 
     setFirstName("");
-    setLastName("");
+    setPassWord("");
     setEmail("");
   }
 
@@ -47,9 +47,9 @@ export default function CreateAccount() {
             required
           />
           <input
-            placeholder="Last name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Password"
+            value={PassWord}
+            onChange={(e) => setPassWord(e.target.value)}
             required
           />
           <input

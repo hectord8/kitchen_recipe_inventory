@@ -5,17 +5,17 @@ public class Customer {
 
     private Integer id;
     private String firstName;
-    private String lastName;
+    private String password;
     private String email;
 
     // Default constructor
     public Customer() {}
 
     // Parameterized constructor
-    public Customer(Integer id, String firstName, String lastName, String email) {
+    public Customer(Integer id, String firstName, String password, String email) {
         this.id = id;
         this.firstName = firstName;
-        this.lastName = lastName;
+        this.password = password;
         this.email = email;
     }
 
@@ -36,12 +36,12 @@ public class Customer {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getPassWord() {
+        return password;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPassWord(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -55,6 +55,6 @@ public class Customer {
     @Override
     public String toString() {
         return "Customer [id=" + id + ", firstName=" + firstName +
-                ", lastName=" + lastName + ", email=" + email + "]";
+                ", PassWord=" + password + "]";
     }
 }

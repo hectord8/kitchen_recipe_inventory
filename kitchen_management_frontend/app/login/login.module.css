@@ -1,0 +1,14 @@
+
+
+.main{
+    padding-left: 40%;
+    padding-top: 5%;
+    background-color: red;
+  
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
