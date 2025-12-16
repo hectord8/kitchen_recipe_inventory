@@ -5,27 +5,24 @@ public class recipe {
     private int id;
     private Integer spoonacularId; // nullable for test data
     private String title;
+    private String category;
+    private String diet;
     private String imageUrl;
 
-    // ✅ Full constructor (used when reading from DB)
-    public recipe(int id, Integer spoonacularId, String title, String imageUrl) {
+
+    public recipe(int id, Integer spoonacularId, String title, String category, String diet, String imageUrl) {
         this.id = id;
         this.spoonacularId = spoonacularId;
         this.title = title;
+        this.category = category;
+        this.diet = diet;
         this.imageUrl = imageUrl;
     }
 
-    // ✅ Constructor without id (used before insert)
-    public recipe(Integer spoonacularId, String title, String imageUrl) {
-        this.spoonacularId = spoonacularId;
-        this.title = title;
-        this.imageUrl = imageUrl;
-    }
 
-    // ✅ Empty constructor (required by Jackson / Spring sometimes)
     public recipe() {}
 
-    // getters & setters
+
     public int getId() {
         return id;
     }
@@ -49,6 +46,23 @@ public class recipe {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDiet() {
+        return diet;
+    }
+
+    public void setDiet(String diet) {
+        this.diet = diet;
+    }
+
 
     public String getImageUrl() {
         return imageUrl;

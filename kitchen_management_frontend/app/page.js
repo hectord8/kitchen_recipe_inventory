@@ -8,12 +8,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <h2>Home</h2>
-        <div className={styles.filter}>
-            <button>All</button>
-            <button>vegitrain</button>
-            <button>vegan</button>
-
-        </div>  
+       
         <AllRecipes/>
       </main>
     </div>

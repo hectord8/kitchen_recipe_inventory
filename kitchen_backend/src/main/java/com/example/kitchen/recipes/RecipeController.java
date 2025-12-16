@@ -25,6 +25,16 @@ public class RecipeController {
         return recipeDao.getAllrecipes();
     }
 
+    @GetMapping("/Diets")
+    public List<String> getAllDiets() {
+        return recipeDao.getAllDiets();
+    }
+
+    @GetMapping("/Category")
+    public List<String> getAllCats() {
+        return recipeDao.getAllCats();
+    }
+
 
 
 

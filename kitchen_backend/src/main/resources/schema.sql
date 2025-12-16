@@ -6,10 +6,12 @@ CREATE TABLE IF NOT EXISTS customers (
     );
 
 CREATE TABLE IF NOT EXISTS recipes (
-        id INT  auto_increment PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        image VARCHAR(255) NOT NULL,
-        spoonacular_id VARCHAR(255) NOT NULL
+                                       id INT  auto_increment PRIMARY KEY,
+                                       title VARCHAR(255) NOT NULL,
+                                       category VARCHAR(255) NOT NULL,
+                                       diet VARCHAR(255) NOT NULL,
+                                       image VARCHAR(255) NOT NULL,
+                                       spoonacular_id VARCHAR(255) NOT NULL
 
 );
 
