@@ -1,6 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Nav from "@/Components/nav";
 import Link from "next/link";
+
+import AuthProvider from "../Components/auth";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,15 +20,14 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <nav>
-          <Link className="link" href="/">Home</Link>
-          <Link className="link" href="/login">Login</Link>
-          <Link className="link"href="/CreateAccount">create</Link>
-        </nav>
-        {children}
+        <AuthProvider>
+          <Nav />        {/* ✅ client component */}
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

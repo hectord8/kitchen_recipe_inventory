@@ -36,7 +36,7 @@ public class CustomerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Customer body) {
+    public ResponseEntity<?> login(@RequestBody Customer body , HttpSession session) {
 
         System.out.println("HIT /login");
         System.out.println("firstName=" + body.getFirstName());
@@ -58,12 +58,31 @@ public class CustomerController {
         }
     }
 
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(HttpSession session) {
+        Integer id = (Integer) session.getAttribute("customerId");
+        if (id == null) return ResponseEntity.status(401).body("Not logged in");
+
+        // fetch full customer if you want
+        return ResponseEntity.ok(id);
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out");
+    }
+
+
     @PostMapping("/register")
     public ResponseEntity<Customer> insert(@RequestBody Customer customer) {
         String hashed = passwordEncoder.encode(customer.getPassWord());
         customer.setPassWord(hashed);
         Customer saved = CustomerDao.insert(customer);
 
+        saved.setPassWord(null);
         return ResponseEntity.ok(saved);
     }
 }

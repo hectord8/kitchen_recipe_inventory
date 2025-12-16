@@ -1,12 +1,13 @@
 "use client";
 
 import styles from "./login.module.css";
-import { useState } from "react";
-
+import { useState , useContext } from "react";
+import { AuthContext } from "@/Components/auth";
 const API = "http://localhost:8080/Customers/";
 
 export default function Login() {
-  const [customer, setCustomer] = useState(null);
+  const [customer] = useState(null);
+  const { setCustomer } = useContext(AuthContext);
   const [error, setError] = useState("");
   const [firstName, setFirstName] = useState("");
   const [passWord, setPassword] = useState("");
@@ -19,7 +20,8 @@ export default function Login() {
       const res = await fetch("http://localhost:8080/Customers/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, password: passWord })
+        body: JSON.stringify({ firstName, password: passWord }),
+        credentials: "include"
       });
             
       const data = await res.json().catch(() => null);
