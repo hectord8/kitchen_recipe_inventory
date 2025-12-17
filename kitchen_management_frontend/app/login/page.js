@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import styles from "./login.module.css";
-import { useState , useContext } from "react";
+import { useRouter } from "next/navigation";
+import { useState , useContext} from "react";
 import { AuthContext } from "@/Components/auth";
 
 import { redirect, RedirectType } from 'next/navigation'
@@ -9,6 +10,7 @@ import { redirect, RedirectType } from 'next/navigation'
 
 
 export default function Login() {
+    const router = useRouter();
   const [customer] = useState(null);
   const { setCustomer } = useContext(AuthContext);
   const [error, setError] = useState("");
@@ -29,7 +31,7 @@ export default function Login() {
             
       const data = await res.json().catch(() => null);
       setCustomer(data);
-      redirect("/" , RedirectType.push);
+       router.push("/"); 
     } catch (err) {
       setError(err.message || "Login failed");
     }

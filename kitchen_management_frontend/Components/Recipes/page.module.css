@@ -101,3 +101,18 @@
   font-size: 20px;
 }
 
+  /* useEffect(() => {
+  setEndpoint(
+      Favourites
+        ? "http://localhost:8080/saved-recipes/ids"
+        : "http://localhost:8080/recipes"
+    );
+  }, [Favourites]); 
+  
+
+
+    if (!endpoint) return;
+    setLoading(true);
+    setError("");
+  
+  */

@@ -9,7 +9,7 @@ export default function Home() {
       <main className={styles.main}>
         <h2>Home</h2>
        
-        <ClientRecipes endpoint="http://localhost:8080/recipes"/>
+        <ClientRecipes/>
       </main>
     </div>
   );
