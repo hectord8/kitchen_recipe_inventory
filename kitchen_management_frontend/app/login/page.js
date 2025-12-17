@@ -1,15 +1,18 @@
 "use client";
-
+import Link from "next/link";
 import styles from "./login.module.css";
 import { useState , useContext } from "react";
 import { AuthContext } from "@/Components/auth";
-const API = "http://localhost:8080/Customers/";
+
+import { redirect, RedirectType } from 'next/navigation'
+
+
 
 export default function Login() {
   const [customer] = useState(null);
   const { setCustomer } = useContext(AuthContext);
   const [error, setError] = useState("");
-  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
   const [passWord, setPassword] = useState("");
 
   async function login() {
@@ -20,15 +23,17 @@ export default function Login() {
       const res = await fetch("http://localhost:8080/Customers/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, password: passWord }),
+        body: JSON.stringify({ email, password: passWord }),
         credentials: "include"
       });
             
       const data = await res.json().catch(() => null);
       setCustomer(data);
+      redirect("/" , RedirectType.push);
     } catch (err) {
       setError(err.message || "Login failed");
     }
+    
   }
 
   return (
@@ -40,9 +45,9 @@ export default function Login() {
 
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
           <input
-            placeholder="First name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
@@ -57,13 +62,11 @@ export default function Login() {
           </button>
         </form>
 
-        {customer && (
-          <div>
-            <p>
-              {customer.firstName} — {customer.email}
-            </p>
-          </div>
-        )}
+        <p>If you dont have an account  
+          <Link  className={styles.createaccount} href="/CreateAccount">
+               - Create one
+            </Link> 
+        </p>
       </main>
     </div>
   );

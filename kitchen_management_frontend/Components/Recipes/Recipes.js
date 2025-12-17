@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
 import Image from "next/image";
 import styles from "./page.module.css"; // adjust path if needed
+import { AuthContext } from "../auth";
 
-export default function AllRecipes() {
+export default function ClientRecipes({ endpoint }) {
+  const {customer, loading:authLoading } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,10 +14,32 @@ export default function AllRecipes() {
   const [Cats, setCats] = useState([]);
 
   const [selectedDiet, setSelectedDiet] = useState("ALL");
-  const [selectedCat , setSelectedCat] = useState("ALL");
+  const [selectedCat, setSelectedCat] = useState("ALL");
+
+
+  const [heartedIds, setHeartedIds] = useState(new Set());
+
+const [heartsLoaded, setHeartsLoaded] = useState(false);
+
+useEffect(() => {
+  if (!customer) return;
+
+  fetch("http://localhost:8080/saved-recipes/ids", {
+    credentials: "include",
+  })
+    .then(r => (r.ok ? r.json() : []))
+    .then(recipes => {
+  const ids = recipes.map(r => r.id);
+  console.log("Extracted ids:", ids);
+  setHeartedIds(new Set(ids.map(Number)));
+  setHeartsLoaded(true);
+    })
+    .catch(() => setHeartsLoaded(true));
+}, [customer]);
+
 
   useEffect(() => {
-    fetch("http://localhost:8080/recipes", {
+    fetch(endpoint, {
       credentials: "include",
     })
       .then(async (r) => {
@@ -75,68 +99,106 @@ export default function AllRecipes() {
   if (loading) return <p>Loading recipes...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
+
+  async function toggleHeart(id) {
+  const isHearted = heartedIds.has(id);
+   
+
+  setHeartedIds(prev => {
+    const next = new Set(prev);
+    isHearted ? next.delete(id) : next.add(id);
+    return next;
+  });
+
+  try {
+    const res = await fetch(`http://localhost:8080/saved-recipes/${id}`, {
+      method: isHearted ? "DELETE" : "POST",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to update saved recipe");
+    }
+  } catch (err) {
+    console.error(err);
+
+    setHeartedIds(prev => {
+      const next = new Set(prev);
+      isHearted ? next.add(id) : next.delete(id);
+      return next;
+    });
+  }
+}
+
   return (
-    <div>
+    <div className={styles.main}>
       <div className={styles.filter}>
-        <div>
-           <button
-          type="button"
-          onClick={() => setSelectedDiet("ALL")}
-          
-        >
-          All diets
-        </button>
-
-        {Diets.map((Diets) => (
-          <div key={Diets}>
-            <button onClick={() => setSelectedDiet(Diets)} >{Diets}</button>
+        <div className={styles.filterFixed}>
+          <h1>Filters</h1>
+            <div>
+              <h2>Diets</h2>
+          <button type="button" onClick={() => setSelectedDiet("ALL")}>
+            All diets
+          </button>
+          <div className={styles.filterButtons}>
+             {Diets.map((Diets) => (
+            <div key={Diets} >
+              <button onClick={() => setSelectedDiet(Diets)}>{Diets}</button>
+            </div>
+          ))}
           </div>
-        ))}
-
-        </div>
-
-        <div>
-
-          <button
-          type="button"
-          onClick={() => setSelectedCat("ALL")}
-          
-        >
-          All Cats
-        </button>
-
-        {Cats.map((Cats) => (
-          <div key={Cats}>
-            <button onClick={() => setSelectedCat(Cats)} >{Cats}</button>
-          </div>
-        ))}
-          
-        </div>
-       
-
-
          
+        </div>
+
+        <div>
+          <h2>Categories</h2>
+
+          <button type="button" onClick={() => setSelectedCat("ALL")}>
+            All Cats
+          </button>
+          <div className={styles.filterButtons}>
+          {Cats.map((Cats) => (
+            <div key={Cats}>
+              <button onClick={() => setSelectedCat(Cats)}>{Cats}</button>
+            </div>
+          ))}
+          </div>
+        </div>
       </div>
+        </div>
+        
 
       <div className={styles.body}>
-        {filteredRecipes.map((recipe) => (
-          <div key={recipe.id} className={styles.card}>
-            <div className={styles.imageContainer}>
-              <Image
-                src={recipe.imageUrl || "/burger.jpg"} // fallback
-                sizes="100vw"
-                fill
-                alt={recipe.title || "Recipe image"}
-              />
-            </div>
+        {filteredRecipes.map((recipe) => {
+          const isHearted = heartedIds.has(recipe.id);
 
-            <h2>{recipe.title}</h2>
-            <p>
-              {/* replace with recipe.description later if you add it */}
-              Click to view details.
-            </p>
-          </div>
-        ))}
+          return (
+            <div key={recipe.id} className={styles.card}>
+              {customer && heartsLoaded && (
+                  <button
+                className={`${styles.heart} ${isHearted ? styles.hearted : ""}`}
+                onClick={() => toggleHeart(recipe.id)}
+                type="button"
+                aria-label={isHearted ? "Unheart recipe" : "Heart recipe"}
+              />
+              )
+              }
+              
+
+              <div className={styles.imageContainer}>
+                <Image
+                  src={recipe.imageUrl || "/burger.jpg"}
+                  sizes="100vw"
+                  fill
+                  alt={recipe.title || "Recipe image"}
+                />
+              </div>
+
+              <h2>{recipe.title}</h2>
+              <p>Click to view details.</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

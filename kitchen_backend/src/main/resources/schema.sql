@@ -1,9 +1,9 @@
-CREATE TABLE IF NOT EXISTS customers (
-        id INT auto_increment PRIMARY KEY ,
-        firstname VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL
-    );
+CREATE TABLE IF NOT EXISTS  customers (
+                           id INT AUTO_INCREMENT PRIMARY KEY,
+                           firstname VARCHAR(255) NOT NULL,
+                           email VARCHAR(255) NOT NULL UNIQUE,
+                           password VARCHAR(255) NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS recipes (
                                        id INT  auto_increment PRIMARY KEY,

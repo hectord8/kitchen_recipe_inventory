@@ -1,7 +1,7 @@
 
 import Image from "next/image";
 import styles from "./page.module.css";
-import AllRecipes from "@/Components/Recipes/Recipes";
+import ClientRecipes from "@/Components/Recipes/Recipes";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       <main className={styles.main}>
         <h2>Home</h2>
        
-        <AllRecipes/>
+        <ClientRecipes endpoint="http://localhost:8080/recipes"/>
       </main>
     </div>
   );

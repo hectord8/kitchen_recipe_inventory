@@ -9,7 +9,7 @@ export default function CreateAccount() {
   const [error, setError] = useState("");
 
   const [firstName, setFirstName] = useState("");
-  const [PassWord,  setPassWord] = useState("");
+  const [password,  setPassWord] = useState("");
   const [email, setEmail] = useState("");
 
 
@@ -20,7 +20,7 @@ export default function CreateAccount() {
     const res = await fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName, PassWord, email }),
+      body: JSON.stringify({ firstName, password, email }),
        credentials: "include"
     });
     console.log(res.ok);
@@ -48,7 +48,7 @@ export default function CreateAccount() {
           />
           <input
             placeholder="Password"
-            value={PassWord}
+            value={password}
             onChange={(e) => setPassWord(e.target.value)}
             required
           />

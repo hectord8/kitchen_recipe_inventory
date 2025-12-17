@@ -1,6 +1,6 @@
 package com.example.kitchen.recipes;
 
-public class recipe {
+public class Recipe {
 
     private int id;
     private Integer spoonacularId; // nullable for test data
@@ -10,7 +10,7 @@ public class recipe {
     private String imageUrl;
 
 
-    public recipe(int id, Integer spoonacularId, String title, String category, String diet, String imageUrl) {
+    public Recipe(int id, Integer spoonacularId, String title, String category, String diet, String imageUrl) {
         this.id = id;
         this.spoonacularId = spoonacularId;
         this.title = title;
@@ -20,7 +20,7 @@ public class recipe {
     }
 
 
-    public recipe() {}
+    public Recipe() {}
 
 
     public int getId() {

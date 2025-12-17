@@ -4,7 +4,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class RecipeDAO {
@@ -17,10 +16,10 @@ public class RecipeDAO {
 
 
 
-    public List<recipe> getAllrecipes() {
+    public List<Recipe> getAllrecipes() {
         return jdbc.query(
                 "SELECT id, title, category , diet , image, spoonacular_id FROM recipes ORDER BY id DESC",
-                (rs, rowNum) -> new recipe(
+                (rs, rowNum) -> new Recipe(
                         rs.getInt("id"),
                          rs.getInt("spoonacular_id"),
                         rs.getString("title"),
@@ -44,6 +43,7 @@ public class RecipeDAO {
                 String.class
         );
     }
+
 
 
 

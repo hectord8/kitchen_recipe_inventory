@@ -1,0 +1,38 @@
+.nav{
+    background-color: blue;
+    display: flex;
+
+    min-height: 50px;
+}
+
+.customer{
+    position: absolute;
+    height: 50px;
+    width: 8vw;
+    background-color: aliceblue;
+    margin-left: 90vw;
+   
+}
+
+.customer span{
+    display: flex;
+}
+
+.customer span h5{
+    padding: 15px;
+    margin-right: 5%;
+}
+.customer span button {
+    min-height: 50px;
+}
+
+.login{
+    background-color: red;
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    padding-top: 2%;
+    font-size: xx-large;
+    text-decoration: none;
+    color: white;
+}

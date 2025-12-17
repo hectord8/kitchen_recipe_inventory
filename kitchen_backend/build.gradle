@@ -30,6 +30,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation "org.jdbi:jdbi3-core:3.45.1"
+    implementation "org.jdbi:jdbi3-sqlobject:3.45.1"
+    implementation "org.jdbi:jdbi3-spring5:3.45.1"
+    runtimeOnly "com.h2database:h2"
 
 }
 

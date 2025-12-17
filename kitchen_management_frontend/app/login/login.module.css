@@ -12,3 +12,10 @@
     flex-direction: column;
     width: 50%;
 }
+
+
+.createaccount{
+    padding: 1%;
+    text-decoration: none;
+    color: black;
+}

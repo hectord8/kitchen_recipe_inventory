@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Nav from "@/Components/nav";
-import Link from "next/link";
+import Nav from "@/Components/NavBar/nav";
+
 
 import AuthProvider from "../Components/auth";
 const geistSans = Geist({
@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <Nav />        {/* ✅ client component */}
+          <Nav />       
           {children}
         </AuthProvider>
       </body>

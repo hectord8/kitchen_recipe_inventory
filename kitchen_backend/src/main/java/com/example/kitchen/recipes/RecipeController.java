@@ -1,12 +1,10 @@
 package com.example.kitchen.recipes;
 
-import jakarta.servlet.http.HttpSession;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+
 @RestController
 @RequestMapping("/recipes")
 public class RecipeController {
@@ -21,7 +19,7 @@ public class RecipeController {
 
     // 1) General: list all recipes
     @GetMapping
-    public List<recipe> getAll() {
+    public List<Recipe> getAll() {
         return recipeDao.getAllrecipes();
     }
 

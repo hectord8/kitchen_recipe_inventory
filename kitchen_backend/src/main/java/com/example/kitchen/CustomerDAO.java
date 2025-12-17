@@ -14,7 +14,7 @@ public class CustomerDAO {
 
     public Customer insert(Customer c) {
         jdbc.update(
-                "INSERT INTO CUSTOMERS (FIRST_NAME, PASSWORD, EMAIL) VALUES (?, ?, ?)",
+                "INSERT INTO CUSTOMERS (firstname, PASSWORD, EMAIL) VALUES (?, ?, ?)",
                 c.getFirstName(),
                 c.getPassWord(),
                 c.getEmail()
@@ -25,27 +25,43 @@ public class CustomerDAO {
 
     public List<Customer> getAll() {
         return jdbc.query(
-                "SELECT id, first_name, PASSWORD, email FROM customers",
+                "SELECT id, firstname, PASSWORD, email FROM customers",
                 (rs, rowNum) -> new Customer(
                         rs.getInt("id"),
-                        rs.getString("first_name"),
+                        rs.getString("firstname"),
                         rs.getString("PASSWORD"),
                         rs.getString("email")
                 )
         );
     }
 
-    public Customer getCustomerByLogin(String firstName ) {
-        System.out.println(firstName );
+    public Customer getCustomerByLogin(String email ) {
+
         return jdbc.queryForObject(
-                "SELECT id, first_name, PASSWORD, email FROM customers WHERE first_name = ? ",
+                "SELECT id, firstname, PASSWORD, email FROM customers WHERE email= ? ",
                 (rs, rowNum) -> new Customer(
                         rs.getInt("id"),
-                        rs.getString("first_name"),
+                        rs.getString("firstname"),
                         rs.getString("PASSWORD"),
                         rs.getString("email")
                 ),
-                firstName
+                email
+
+        );
+
+    }
+
+    public Customer getById(int id ) {
+
+        return jdbc.queryForObject(
+                "SELECT id, firstname, email, password FROM customers WHERE id = ?",
+                (rs, rowNum) -> new Customer(
+                        rs.getInt("id"),
+                        rs.getString("firstname"),
+                        rs.getString("PASSWORD"),
+                        rs.getString("email")
+                ),
+                    id
 
         );
 

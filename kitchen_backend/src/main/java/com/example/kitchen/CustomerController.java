@@ -26,6 +26,12 @@ public class CustomerController {
     }
 
 
+    @GetMapping("/debug/session")
+    public Object debug(HttpSession session) {
+        System.out.println("Session ID = " + session.getId());
+        System.out.println("customer attr = " + session.getAttribute("customer"));
+        return session.getAttribute("customer");
+    }
 
 
 
@@ -38,17 +44,16 @@ public class CustomerController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Customer body , HttpSession session) {
 
-        System.out.println("HIT /login");
-        System.out.println("firstName=" + body.getFirstName());
-        System.out.println("passWord=" + body.getPassWord());
         try {
-            Customer db = CustomerDao.getCustomerByLogin(body.getFirstName());
-            System.out.println("passWord=" + db.getPassWord());
+            Customer db = CustomerDao.getCustomerByLogin(body.getEmail());
+            if (db == null) {
+                return ResponseEntity.status(401).body("Invalid login");
+            }
+
             boolean ok = passwordEncoder.matches(body.getPassWord(), db.getPassWord());
             if (!ok) return ResponseEntity.status(401).body("Invalid login");
 
-            session.setAttribute("customerId", db.getId());
-            session.setAttribute("firstName", db.getFirstName());
+            session.setAttribute("customer", db);
 
             db.setPassWord(null);
             return ResponseEntity.ok(db);
@@ -61,11 +66,13 @@ public class CustomerController {
 
     @GetMapping("/me")
     public ResponseEntity<?> me(HttpSession session) {
-        Integer id = (Integer) session.getAttribute("customerId");
-        if (id == null) return ResponseEntity.status(401).body("Not logged in");
+        Customer customer = (Customer) session.getAttribute("customer");
+        if (customer == null) {
+            return ResponseEntity.status(401).build();
+        }
 
-        // fetch full customer if you want
-        return ResponseEntity.ok(id);
+        customer.setPassWord(null);
+        return ResponseEntity.ok(customer);
     }
 
 
