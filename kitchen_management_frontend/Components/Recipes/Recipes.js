@@ -27,7 +27,7 @@ export default function ClientRecipes() {
     console.log("endpoint " + endpoint);
     if (!customer) return;
 
-    fetch("http://localhost:8080/saved-recipes/ids", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
       credentials: "include",
     })
       .then((r) => (r.ok ? r.json() : []))
@@ -42,8 +42,8 @@ export default function ClientRecipes() {
 
   useEffect(() => {
     const endpoint = Favourites
-      ? "http://localhost:8080/saved-recipes/ids"
-      : "http://localhost:8080/recipes";
+      ? `${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`
+      : `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
 
     fetch(endpoint, {
       credentials: "include",
@@ -61,7 +61,7 @@ export default function ClientRecipes() {
         setLoading(false);
       });
 
-    fetch("http://localhost:8080/recipes/Diets", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Diets`, {
       credentials: "include",
     })
       .then(async (r) => {
@@ -77,7 +77,7 @@ export default function ClientRecipes() {
         setLoading(false);
       });
 
-    fetch("http://localhost:8080/recipes/Category", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Category`, {
       credentials: "include",
     })
       .then(async (r) => {
@@ -115,7 +115,7 @@ export default function ClientRecipes() {
     });
 
     try {
-      const res = await fetch(`http://localhost:8080/saved-recipes/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`, {
         method: isHearted ? "DELETE" : "POST",
         credentials: "include",
       });
@@ -133,36 +133,6 @@ export default function ClientRecipes() {
       });
     }
   }
-
-   async function toggleDe(id) {
-    const isHearted = heartedIds.has(id);
-
-    setHeartedIds((prev) => {
-      const next = new Set(prev);
-      isHearted ? next.delete(id) : next.add(id);
-      return next;
-    });
-
-    try {
-      const res = await fetch(`http://localhost:8080/saved-recipes/${id}`, {
-        method: isHearted ? "DELETE" : "POST",
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update saved recipe");
-      }
-    } catch (err) {
-      console.error(err);
-
-      setHeartedIds((prev) => {
-        const next = new Set(prev);
-        isHearted ? next.add(id) : next.delete(id);
-        return next;
-      });
-    }
-  }
-
   return (
     <div className={styles.main}>
       <div className={styles.filter}>

@@ -64,7 +64,7 @@ export default function CreateRecipe() {
 
        console.log(creator);
 
-      const res = await fetch("http://localhost:8080/recipes/recipes", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

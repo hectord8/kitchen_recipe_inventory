@@ -9,7 +9,7 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8080/Customers/me", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/Customers/me`, {
       credentials: "include",
     })
       .then((r) => (r.ok ? r.json() : null))

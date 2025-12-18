@@ -3,7 +3,7 @@
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 
-const API = "http://localhost:8080/Customers/register";
+const API = `${process.env.NEXT_PUBLIC_API_URL}/Customers/register`;
 
 export default function CreateAccount() {
   const [error, setError] = useState("");

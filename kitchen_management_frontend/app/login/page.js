@@ -22,7 +22,7 @@ export default function Login() {
     setCustomer(null);
 
     try {
-      const res = await fetch("http://localhost:8080/Customers/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Customers/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: passWord }),

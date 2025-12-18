@@ -11,7 +11,7 @@ export default function Nav() {
   const { customer, setCustomer, loading } = useContext(AuthContext);
 
   async function logOut() {
-    await fetch("http://localhost:8080/Customers/logout", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Customers/logout`, {
       method: "POST",
       credentials: "include",
     });
