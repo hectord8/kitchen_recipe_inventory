@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS recipes (
                                        image VARCHAR(255),
                                        prep_time INT NOT NULL,
                                        cook_time INT NOT NULL,
-                                       description TEXT
+                                       description TEXT,
+                                       creator VARCHAR(255) NOT NULL,
+
 );
 
 CREATE TABLE IF NOT EXISTS customer_saved_recipes (
