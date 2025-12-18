@@ -22,7 +22,7 @@ export default function ClientRecipes() {
   const [heartedIds, setHeartedIds] = useState(new Set());
 
   const [heartsLoaded, setHeartsLoaded] = useState(false);
-
+  
   useEffect(() => {
     console.log("endpoint " + endpoint);
     if (!customer) return;

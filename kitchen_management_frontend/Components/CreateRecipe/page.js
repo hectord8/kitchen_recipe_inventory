@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./create.module.css";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../auth";
 
@@ -15,11 +15,14 @@ export default function CreateRecipe() {
   const [prepTime, setPrepTime] = useState("");
   const [cookTime, setCookTime] = useState("");
   const [description, setDescription] = useState("");
-  const creator = customer.firstName;
+  
   const [imageFile, setImageFile] = useState(null);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const creator = customer?.firstName ?? "";
+
+
 
   async function uploadImage(file) {
     const formData = new FormData();
