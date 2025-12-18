@@ -11,7 +11,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew clean build -x test
 
 # ---- run stage ----
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 COPY --from=build /app/build/libs/*.jar app.jar
