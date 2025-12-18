@@ -1,51 +1,49 @@
 package com.example.kitchen.recipes;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
+import org.jdbi.v3.sqlobject.customizer.BindBean;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.util.List;
 
-@Repository
-public class RecipeDAO {
+@RegisterBeanMapper(Recipe.class)
+public interface RecipeDAO {
 
-    private final JdbcTemplate jdbc;
+    @SqlQuery("""
+        SELECT id, title, category, diet, image, prep_time, cook_time, description , creator
+        FROM recipes
+        ORDER BY id DESC
+    """)
+    List<Recipe> getAllRecipes();
 
-    public RecipeDAO(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
-    }
+    @SqlQuery("""
+        SELECT DISTINCT TRIM(diet)
+        FROM recipes
+        WHERE diet IS NOT NULL AND TRIM(diet) <> ''
+        ORDER BY TRIM(diet)
+    """)
+    List<String> getAllDiets();
 
+    @SqlQuery("""
+        SELECT DISTINCT TRIM(category)
+        FROM recipes
+        WHERE category IS NOT NULL AND TRIM(category) <> ''
+        ORDER BY TRIM(category)
+    """)
+    List<String> getAllCats();
 
+    @SqlUpdate("""
+        INSERT INTO recipes (title, category, diet, image, prep_time, cook_time, description , creator)
+        VALUES (:title, :category, :diet, :image, :prepTime, :cookTime, :description , :creator)
+    """)
+    @GetGeneratedKeys
+    Recipe insert(@BindBean Recipe recipe);
 
-    public List<Recipe> getAllrecipes() {
-        return jdbc.query(
-                "SELECT id, title, category , diet , image, spoonacular_id FROM recipes ORDER BY id DESC",
-                (rs, rowNum) -> new Recipe(
-                        rs.getInt("id"),
-                         rs.getInt("spoonacular_id"),
-                        rs.getString("title"),
-                        rs.getString("category"),
-                        rs.getString("diet"),
-                        rs.getString("image")
-                )
-        );
-    }
-
-    public List<String> getAllDiets() {
-        return jdbc.queryForList(
-                "SELECT DISTINCT diet FROM recipes WHERE diet IS NOT NULL AND diet <> '' ORDER BY diet",
-                String.class
-        );
-    }
-
-    public List<String> getAllCats() {
-        return jdbc.queryForList(
-                "SELECT DISTINCT category FROM recipes WHERE category IS NOT NULL AND category <> '' ORDER BY category",
-                String.class
-        );
-    }
-
-
-
+    @SqlUpdate("DELETE FROM recipes WHERE id = :id")
+    void deleteById(@Bind("id") int id);
 
 
 }

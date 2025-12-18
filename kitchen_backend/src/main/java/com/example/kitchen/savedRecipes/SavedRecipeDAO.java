@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface SavedRecipeDAO {
 
-
     @SqlUpdate("""
         INSERT INTO customer_saved_recipes (customer_id, recipe_id, description)
         VALUES (:customerId, :recipeId, :description)

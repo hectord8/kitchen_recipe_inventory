@@ -39,7 +39,7 @@ export default function CreateAccount() {
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <form onSubmit={addCustomer} style={{ display: "grid", gap: 8, maxWidth: 320 }}>
+        <form className={styles.form} onSubmit={addCustomer} style={{ display: "grid", gap: 8, maxWidth: 320 }}>
           <input
             placeholder="First name"
             value={firstName}
@@ -60,7 +60,7 @@ export default function CreateAccount() {
             type="email"
           />
 
-          <button type="submit">Add customer</button>
+          <button type="submit">Create customer</button>
         </form>
 
     

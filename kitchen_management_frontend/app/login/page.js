@@ -40,7 +40,7 @@ export default function Login() {
 
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
+      <div className={styles.main}>
         <h2>Login</h2>
 
         {error && <p style={{ color: "black" }}>{error}</p>}
@@ -69,7 +69,7 @@ export default function Login() {
                - Create one
             </Link> 
         </p>
-      </main>
+      </div>
     </div>
   );
 }

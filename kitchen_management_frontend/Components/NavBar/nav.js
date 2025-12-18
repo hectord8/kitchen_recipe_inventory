@@ -26,11 +26,7 @@ export default function Nav() {
           
         </div>
       </Link>
-      {!loading && customer && (
-        <Link className={styles.favs} href="/SavedRecipes">
-           Saved For Later
-        </Link>
-      )}
+    
       
       <div className={styles.customer}>
         {!loading && customer && (

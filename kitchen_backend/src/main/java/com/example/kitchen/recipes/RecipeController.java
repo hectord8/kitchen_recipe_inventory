@@ -1,5 +1,12 @@
 package com.example.kitchen.recipes;
 
+import com.example.kitchen.Customer;
+import com.example.kitchen.CustomerDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.example.kitchen.recipes.Recipe;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,6 +16,7 @@ import java.util.List;
 @RequestMapping("/recipes")
 public class RecipeController {
 
+    @Autowired
     private final RecipeDAO recipeDao;
 
     public RecipeController(RecipeDAO recipeDao) {
@@ -16,11 +24,10 @@ public class RecipeController {
     }
 
 
-
     // 1) General: list all recipes
     @GetMapping
     public List<Recipe> getAll() {
-        return recipeDao.getAllrecipes();
+        return recipeDao.getAllRecipes();
     }
 
     @GetMapping("/Diets")
@@ -33,8 +40,10 @@ public class RecipeController {
         return recipeDao.getAllCats();
     }
 
+    @PostMapping("/recipes")
+    public ResponseEntity<Recipe> insert(@RequestBody Recipe recipe) {
+        Recipe saved = recipeDao.insert(recipe);
 
-
-
-
+        return ResponseEntity.ok(saved);
+    }
 }

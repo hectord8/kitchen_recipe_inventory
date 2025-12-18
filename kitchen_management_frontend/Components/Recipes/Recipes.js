@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useContext } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./page.module.css"; // adjust path if needed
 import { AuthContext } from "../auth";
 
@@ -133,6 +134,35 @@ export default function ClientRecipes() {
     }
   }
 
+   async function toggleDe(id) {
+    const isHearted = heartedIds.has(id);
+
+    setHeartedIds((prev) => {
+      const next = new Set(prev);
+      isHearted ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+    try {
+      const res = await fetch(`http://localhost:8080/saved-recipes/${id}`, {
+        method: isHearted ? "DELETE" : "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update saved recipe");
+      }
+    } catch (err) {
+      console.error(err);
+
+      setHeartedIds((prev) => {
+        const next = new Set(prev);
+        isHearted ? next.add(id) : next.delete(id);
+        return next;
+      });
+    }
+  }
+
   return (
     <div className={styles.main}>
       <div className={styles.filter}>
@@ -188,7 +218,11 @@ export default function ClientRecipes() {
               ))}
             </div>
           </div>
-        </div>
+          {customer && (
+             <Link className={styles.publish} href="/CreateRecipe" >Publish your own recipe</Link>
+ 
+          )}
+                </div>
       </div>
 
       <div className={styles.body}>
@@ -216,9 +250,17 @@ export default function ClientRecipes() {
                   alt={recipe.title || "Recipe image"}
                 />
               </div>
-
+                
               <h2>{recipe.title}</h2>
-              <p>Click to view details.</p>
+              <h4>{recipe.category}</h4>
+              <h4>{recipe.diet}</h4>
+              
+               <h5>Prep Time:{recipe.prepTime}</h5>
+               <h5>Cook Time:{recipe.cookTime}</h5>
+              
+                 <h5>Total Time: {recipe.prepTime + recipe.cookTime} </h5>
+               <button className={styles.details}>See more</button>
+               <p>Created by {recipe.creator} </p>
             </div>
           );
         })}

@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h2>Home</h2>
+     
        
         <ClientRecipes/>
       </main>
