@@ -28,7 +28,8 @@ public class SecurityConfig {
         //config.setAllowedOrigins(List.of("http://localhost:3000"));
 
         // If you need multiple origins later:
-        config.setAllowedOrigins(List.of(frontendUrl));
+        config.setAllowedOriginPatterns(List.of(frontendUrl));
+
 
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
