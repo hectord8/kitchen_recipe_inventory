@@ -16,7 +16,7 @@ public class CustomerDAO {
         jdbc.update(
                 "INSERT INTO CUSTOMERS (firstname, PASSWORD, EMAIL) VALUES (?, ?, ?)",
                 c.getFirstName(),
-                c.getPassWord(),
+                c.getPassword(),
                 c.getEmail()
         );
 

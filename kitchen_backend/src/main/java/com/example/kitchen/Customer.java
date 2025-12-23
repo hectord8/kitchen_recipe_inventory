@@ -36,11 +36,11 @@ public class Customer {
         this.firstName = firstName;
     }
 
-    public String getPassWord() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassWord(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 

@@ -36,7 +36,7 @@ public class CustomerController {
 
 
     // GET endpoint to fetch all Customers
-    @GetMapping("/{firstName}")
+    @GetMapping("/by-firstname/{firstName}")
     public Customer getCustomerByFirstName(@PathVariable String firstName) {
         return CustomerDao.getCustomerByLogin(firstName);
     }
@@ -50,12 +50,12 @@ public class CustomerController {
                 return ResponseEntity.status(401).body("Invalid login");
             }
 
-            boolean ok = passwordEncoder.matches(body.getPassWord(), db.getPassWord());
+            boolean ok = passwordEncoder.matches(body.getPassword(), db.getPassword());
             if (!ok) return ResponseEntity.status(401).body("Invalid login");
 
             session.setAttribute("customer", db);
 
-            db.setPassWord(null);
+            db.setPassword(null);
             return ResponseEntity.ok(db);
 
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class CustomerController {
             return ResponseEntity.status(401).build();
         }
 
-        customer.setPassWord(null);
+        customer.setPassword(null);
         return ResponseEntity.ok(customer);
     }
 
@@ -85,11 +85,11 @@ public class CustomerController {
 
     @PostMapping("/register")
     public ResponseEntity<Customer> insert(@RequestBody Customer customer) {
-        String hashed = passwordEncoder.encode(customer.getPassWord());
-        customer.setPassWord(hashed);
+        String hashed = passwordEncoder.encode(customer.getPassword());
+        customer.setPassword(hashed);
         Customer saved = CustomerDao.insert(customer);
 
-        saved.setPassWord(null);
+        saved.setPassword(null);
         return ResponseEntity.ok(saved);
     }
 }

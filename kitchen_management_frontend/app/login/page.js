@@ -15,7 +15,7 @@ export default function Login() {
   const { setCustomer } = useContext(AuthContext);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
-  const [passWord, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
   async function login() {
     setError("");
@@ -25,13 +25,22 @@ export default function Login() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Customers/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: passWord }),
+        body: JSON.stringify({ email, password }),
         credentials: "include"
       });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Login failed (${res.status})`);
+      }
+
             
       const data = await res.json().catch(() => null);
+      if (!data) throw new Error("No customer returned from server");
+
       setCustomer(data);
        router.push("/"); 
+        router.refresh();
     } catch (err) {
       setError(err.message || "Login failed");
     }
@@ -55,7 +64,7 @@ export default function Login() {
           <input
             placeholder="Password"
             type="password"
-            value={passWord}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
