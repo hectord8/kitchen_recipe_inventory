@@ -150,7 +150,7 @@
   height: 34px;
   padding: 0 12px;
 
-  width: auto;              /* override your fixed width */
+  width: auto;              /* override your fixed width  changes to redeploy*/
   min-width: 80px;
   max-width: 100%;
 

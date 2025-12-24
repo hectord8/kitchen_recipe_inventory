@@ -11,6 +11,7 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/Customers/me`, {
       credentials: "include",
+      
     })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
