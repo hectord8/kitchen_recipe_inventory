@@ -22,7 +22,7 @@ export default function CreateRecipe() {
   const [loading, setLoading] = useState(false);
   const creator = customer?.firstName ?? "";
 
-
+const { token } = useContext(AuthContext);
 
   async function uploadImage(file) {
     const formData = new FormData();
@@ -66,8 +66,7 @@ export default function CreateRecipe() {
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/recipes`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           title: title.trim(),
           image: imageUrl,      

@@ -28,8 +28,7 @@ export default function ClientRecipes() {
   const [expandedRecipe, setExpandedRecipe] = useState(null);
 
   useEffect(() => {
-    console.log("End point " + process.env.NEXT_PUBLIC_API_URL);
-    console.log("endpoint " + endpoint);
+ 
     if (!customer) return;
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
