@@ -11,8 +11,8 @@ import { redirect, RedirectType } from 'next/navigation'
 
 export default function Login() {
     const router = useRouter();
-  const [customer] = useState(null);
   const { setCustomer } = useContext(AuthContext);
+   const { setToken } = useContext(AuthContext);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,11 +22,11 @@ export default function Login() {
     setCustomer(null);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Customers/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include"
+        body: JSON.stringify({ email, password })
+
       });
 
       if (!res.ok) {
@@ -38,7 +38,8 @@ export default function Login() {
       const data = await res.json().catch(() => null);
       if (!data) throw new Error("No customer returned from server");
 
-      setCustomer(data);
+      setToken(data.token);
+      setCustomer(data.customer);
        router.push("/"); 
         router.refresh();
     } catch (err) {

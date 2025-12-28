@@ -41,47 +41,6 @@ public class CustomerController {
         return CustomerDao.getCustomerByLogin(firstName);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Customer body , HttpSession session) {
-
-        try {
-            Customer db = CustomerDao.getCustomerByLogin(body.getEmail());
-            if (db == null) {
-                return ResponseEntity.status(401).body("Invalid login");
-            }
-
-            boolean ok = passwordEncoder.matches(body.getPassword(), db.getPassword());
-            if (!ok) return ResponseEntity.status(401).body("Invalid login");
-
-            session.setAttribute("customer", db);
-
-            db.setPassword(null);
-            return ResponseEntity.ok(db);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid login");
-        }
-    }
-
-
-    @GetMapping("/me")
-    public ResponseEntity<?> me(HttpSession session) {
-        Customer customer = (Customer) session.getAttribute("customer");
-        if (customer == null) {
-            return ResponseEntity.status(401).build();
-        }
-
-        customer.setPassword(null);
-        return ResponseEntity.ok(customer);
-    }
-
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok("Logged out");
-    }
-
 
     @PostMapping("/register")
     public ResponseEntity<Customer> insert(@RequestBody Customer customer) {

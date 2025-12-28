@@ -1,37 +1,36 @@
 package com.example.kitchen.savedRecipes;
 
 import com.example.kitchen.Customer;
-import com.example.kitchen.recipes.Recipe;
-import jakarta.servlet.http.HttpSession;
+import com.example.kitchen.CustomerDAO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/saved-recipes")
 public class SavedRecipeController {
 
-
     private final SavedRecipeDAO savedRecipeDao;
+    private final CustomerDAO customerDao;
 
-    public SavedRecipeController(SavedRecipeDAO savedRecipeDao) {
+    public SavedRecipeController(SavedRecipeDAO savedRecipeDao, CustomerDAO customerDao) {
         this.savedRecipeDao = savedRecipeDao;
+        this.customerDao = customerDao;
     }
 
-
-    private Customer requireCustomer(HttpSession session) {
-        Object obj = session.getAttribute("customer");
-        return (obj instanceof Customer c) ? c : null;
+    private Customer requireCustomer(Authentication auth) {
+        if (auth == null) return null;
+        String email = auth.getName(); // JWT subject you set in the filter
+        return customerDao.getCustomerByLogin(email);
     }
-
 
     @PostMapping("/{recipeId}")
-    public ResponseEntity<?> save(@PathVariable int recipeId,
-                                  @RequestBody(required = false) SavedRecipe body,
-                                  HttpSession session) {
-
-        Customer customer = requireCustomer(session);
+    public ResponseEntity<?> save(
+            @PathVariable int recipeId,
+            @RequestBody(required = false) SavedRecipe body,
+            Authentication auth
+    ) {
+        Customer customer = requireCustomer(auth);
         if (customer == null) return ResponseEntity.status(401).body("Not logged in");
 
         String description = (body != null) ? body.getDescription() : null;
@@ -42,29 +41,20 @@ public class SavedRecipeController {
         return ResponseEntity.ok().build();
     }
 
-
     @DeleteMapping("/{recipeId}")
-    public ResponseEntity<?> unsave(@PathVariable int recipeId, HttpSession session) {
-
-        Customer customer = requireCustomer(session);
+    public ResponseEntity<?> unsave(@PathVariable int recipeId, Authentication auth) {
+        Customer customer = requireCustomer(auth);
         if (customer == null) return ResponseEntity.status(401).body("Not logged in");
 
         savedRecipeDao.unsaveRecipe(customer.getId(), recipeId);
         return ResponseEntity.noContent().build();
     }
 
-
-
     @GetMapping("/ids")
-    public ResponseEntity<?> getMySavedIds(HttpSession session) {
-        Customer customer = (Customer) session.getAttribute("customer");
+    public ResponseEntity<?> getMySavedIds(Authentication auth) {
+        Customer customer = requireCustomer(auth);
         if (customer == null) return ResponseEntity.status(401).body("Not logged in");
 
         return ResponseEntity.ok(savedRecipeDao.getAllSaved(customer.getId()));
     }
-
-
-
-
-
 }

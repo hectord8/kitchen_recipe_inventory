@@ -4,9 +4,11 @@ import { useEffect, useState, useMemo, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css"; // adjust path if needed
+
 import { AuthContext } from "../auth";
 
 export default function ClientRecipes() {
+  const { token } = useContext(AuthContext);
   const { customer, loading: authLoading } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,10 @@ export default function ClientRecipes() {
     if (!customer) return;
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
-      credentials: "include",
+      headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  
     })
       .then((r) => (r.ok ? r.json() : []))
       .then((recipes) => {
@@ -47,7 +52,9 @@ export default function ClientRecipes() {
       : `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
 
     fetch(endpoint, {
-      credentials: "include",
+      headers: {
+    Authorization: `Bearer ${token}`,
+  }
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -79,7 +86,9 @@ export default function ClientRecipes() {
       });
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Category`, {
-      credentials: "include",
+     headers: {
+    Authorization: `Bearer ${token}`,
+  },
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -118,7 +127,9 @@ export default function ClientRecipes() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`, {
         method: isHearted ? "DELETE" : "POST",
-        credentials: "include",
+        headers: {
+    Authorization: `Bearer ${token}`,
+  },
       });
 
       if (!res.ok) {
