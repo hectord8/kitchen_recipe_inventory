@@ -58,3 +58,41 @@
   text-decoration: none;
   color: black;
 }
+
+
+@media (max-width: 1400px) {
+.main {
+    margin-left: 20vw;
+   
+  width: 60vw;
+
+}
+
+.form input{
+    margin-top: 5%;
+    margin-bottom: 2%;
+    height: 50px;
+    width: 130%;
+    padding: 2%;
+    border: 1px;
+    border-radius: 2px;
+    background-color: #d2e4c4;
+    border: 1px solid rgba(0, 0, 0, 0.12);  
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+}
+
+
+
+@media (max-width: 800px) {
+.main {
+    margin-left: 10vw;
+   
+  width: 80vw;
+
+}
+
+
+
+}

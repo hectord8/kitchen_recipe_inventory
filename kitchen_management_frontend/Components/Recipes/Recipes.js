@@ -24,7 +24,9 @@ export default function ClientRecipes() {
   const [heartedIds, setHeartedIds] = useState(new Set());
 
   const [heartsLoaded, setHeartsLoaded] = useState(false);
-  
+
+  const [expandedRecipe, setExpandedRecipe] = useState(null);
+
   useEffect(() => {
     console.log("End point " + process.env.NEXT_PUBLIC_API_URL);
     console.log("endpoint " + endpoint);
@@ -32,9 +34,8 @@ export default function ClientRecipes() {
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
       headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((r) => (r.ok ? r.json() : []))
       .then((recipes) => {
@@ -53,8 +54,8 @@ export default function ClientRecipes() {
 
     fetch(endpoint, {
       headers: {
-    Authorization: `Bearer ${token}`,
-  }
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -86,9 +87,9 @@ export default function ClientRecipes() {
       });
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Category`, {
-     headers: {
-    Authorization: `Bearer ${token}`,
-  },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -125,12 +126,15 @@ export default function ClientRecipes() {
     });
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`, {
-        method: isHearted ? "DELETE" : "POST",
-        headers: {
-    Authorization: `Bearer ${token}`,
-  },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`,
+        {
+          method: isHearted ? "DELETE" : "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to update saved recipe");
@@ -145,6 +149,7 @@ export default function ClientRecipes() {
       });
     }
   }
+
   return (
     <div className={styles.main}>
       <div className={styles.filter}>
@@ -182,7 +187,7 @@ export default function ClientRecipes() {
           <div>
             <h2>Categories</h2>
 
-            <button type="button" onClick={() => setSelectedCat("ALL")} >
+            <button type="button" onClick={() => setSelectedCat("ALL")}>
               All Cats
             </button>
             <div className={styles.filterButtons}>
@@ -201,18 +206,24 @@ export default function ClientRecipes() {
             </div>
           </div>
           {customer && (
-             <Link className={styles.publish} href="/CreateRecipe" >Publish your own recipe</Link>
- 
+            <Link className={styles.publish} href="/CreateRecipe">
+              Publish your own recipe
+            </Link>
           )}
-                </div>
+        </div>
       </div>
 
       <div className={styles.body}>
         {filteredRecipes.map((recipe) => {
           const isHearted = heartedIds.has(recipe.id);
-
+          
           return (
-            <div key={recipe.id} className={styles.card}>
+            <div
+              key={recipe.id}
+              className={`${styles.card} ${
+                expandedRecipe === recipe.id ? styles.expanded : ""
+              }`}
+            >
               {customer && heartsLoaded && (
                 <button
                   className={`${styles.heart} ${
@@ -232,17 +243,26 @@ export default function ClientRecipes() {
                   alt={recipe.title || "Recipe image"}
                 />
               </div>
-                
+
               <h2>{recipe.title}</h2>
               <h4>{recipe.category}</h4>
               <h4>{recipe.diet}</h4>
-              
-               <h5>Prep Time:{recipe.prepTime}</h5>
-               <h5>Cook Time:{recipe.cookTime}</h5>
-              
-                 <h5>Total Time: {recipe.prepTime + recipe.cookTime} </h5>
-               <button className={styles.details}>See more</button>
-               <p>Created by {recipe.creator} </p>
+
+              <h5>Prep Time:{recipe.prepTime}</h5>
+              <h5>Cook Time:{recipe.cookTime}</h5>
+
+              <h5>Total Time: {recipe.prepTime + recipe.cookTime} </h5>
+              <button
+                className={styles.details}
+                onClick={() =>
+                  setExpandedRecipe(
+                    expandedRecipe === recipe.id ? null : recipe.id
+                  )
+                }
+              >
+                {expandedRecipe === recipe.id ? "See less" : "See more"}
+              </button>
+              <p>Created by {recipe.creator} </p>
             </div>
           );
         })}

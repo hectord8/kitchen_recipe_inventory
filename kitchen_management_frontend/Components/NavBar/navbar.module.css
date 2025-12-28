@@ -13,7 +13,7 @@
     
   
     padding: 1vh;
-    margin-left: 90vw;
+    margin-left: 85vw;
    
 }
 .customer h3{
@@ -58,4 +58,13 @@
     text-decoration: none;
      color: #818479 ;
      font-size: 30px;
+}
+
+@media only screen and ( max-width: 800px) {
+.customer{
+    
+    margin-left: 70vw;
+   
+}
+
 }
