@@ -24,6 +24,7 @@ export default function ClientRecipes() {
   const [heartsLoaded, setHeartsLoaded] = useState(false);
   
   useEffect(() => {
+    console.log("End point " + process.env.NEXT_PUBLIC_API_URL);
     console.log("endpoint " + endpoint);
     if (!customer) return;
 
