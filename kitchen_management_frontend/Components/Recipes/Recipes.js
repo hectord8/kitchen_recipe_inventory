@@ -153,15 +153,19 @@ export default function ClientRecipes() {
     <div className={styles.main}>
       <div className={styles.filter}>
         <div className={styles.filterFixed}>
+          
           <h1>Filters</h1>
           <div>
+             {customer && (
             <button
               type="button"
               onClick={() => setFavourties((prev) => !prev)}
             >
               {Favourites ? "Show All" : "Favourites"}
             </button>
+              )}
           </div>
+      
           <div>
             <h2>Diets</h2>
             <button type="button" onClick={() => setSelectedDiet("ALL")}>

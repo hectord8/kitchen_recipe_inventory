@@ -157,12 +157,19 @@
   position: sticky; /* better than fixed for sidebars */
   top: 0;
 
-
-
   padding-right: 6px; /* room for scrollbar */
 }
 
 @media only screen and (max-width: 800px) {
+
+  .filterFixed {
+  position: sticky; /* better than fixed for sidebars */
+  top: 0;
+
+
+
+  padding-right: 6px; /* room for scrollbar */
+}
   .filter {
     display: flex;
 
