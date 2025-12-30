@@ -1,15 +1,12 @@
-DROP TABLE IF EXISTS customer_saved_recipes;
-DROP TABLE IF EXISTS recipes;
-
-CREATE TABLE IF NOT EXISTS  customers (
-                           id INT AUTO_INCREMENT PRIMARY KEY,
-                           firstname VARCHAR(255) NOT NULL,
-                           email VARCHAR(255) NOT NULL UNIQUE,
-                           password VARCHAR(255) NOT NULL
+CREATE TABLE IF NOT EXISTS customers (
+                                         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                         firstname VARCHAR(255) NOT NULL,
+                                         email VARCHAR(255) NOT NULL UNIQUE,
+                                         password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS recipes (
-                                       id INT AUTO_INCREMENT PRIMARY KEY,
+                                       id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                        title VARCHAR(255) NOT NULL,
                                        category VARCHAR(100) NOT NULL,
                                        diet VARCHAR(100) NOT NULL,
@@ -18,19 +15,23 @@ CREATE TABLE IF NOT EXISTS recipes (
                                        cook_time INT NOT NULL,
                                        description TEXT,
                                        creator VARCHAR(255) NOT NULL
-
 );
 
 CREATE TABLE IF NOT EXISTS customer_saved_recipes (
-        customer_id INT NOT NULL,
-        recipe_id INT NOT NULL,
-        saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        description VARCHAR(1000),
+                                                      customer_id INT NOT NULL,
+                                                      recipe_id INT NOT NULL,
+                                                      saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                                      description VARCHAR(1000),
 
-        PRIMARY KEY (customer_id, recipe_id),
+                                                      PRIMARY KEY (customer_id, recipe_id),
 
-        FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
-        FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+                                                      FOREIGN KEY (customer_id)
+                                                          REFERENCES customers(id)
+                                                          ON DELETE CASCADE,
+
+                                                      FOREIGN KEY (recipe_id)
+                                                          REFERENCES recipes(id)
+                                                          ON DELETE CASCADE
 );
 
 
