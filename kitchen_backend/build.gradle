@@ -45,6 +45,10 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
 }
 

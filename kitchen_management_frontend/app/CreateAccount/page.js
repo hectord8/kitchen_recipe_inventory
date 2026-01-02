@@ -9,9 +9,8 @@ export default function CreateAccount() {
   const [error, setError] = useState("");
 
   const [firstName, setFirstName] = useState("");
-  const [password,  setPassWord] = useState("");
+  const [password, setPassWord] = useState("");
   const [email, setEmail] = useState("");
-
 
   async function addCustomer(e) {
     e.preventDefault();
@@ -21,11 +20,23 @@ export default function CreateAccount() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ firstName, password, email }),
-       credentials: "include"
     });
-    console.log(res.ok);
-    if (!res.ok) throw new Error(`POST failed: ${res.status}`);
 
+    const contentType = res.headers.get("content-type") || "";
+    const payload = contentType.includes("application/json")
+      ? await res.json().catch(() => null)
+      : await res.text().catch(() => "");
+
+    if (!res.ok) {
+      const msg = payload?.errors
+        ? Object.entries(payload.errors)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(", ")
+        : payload?.message || payload || "Request failed";
+
+      setError(msg);
+      return;
+    }
 
     setFirstName("");
     setPassWord("");
@@ -39,7 +50,11 @@ export default function CreateAccount() {
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <form className={styles.form} onSubmit={addCustomer} style={{ display: "grid", gap: 8, maxWidth: 320 }}>
+        <form
+          className={styles.form}
+          onSubmit={addCustomer}
+          style={{ display: "grid", gap: 8, maxWidth: 320 }}
+        >
           <input
             placeholder="First name"
             value={firstName}
@@ -62,8 +77,6 @@ export default function CreateAccount() {
 
           <button type="submit">Create customer</button>
         </form>
-
-    
       </main>
     </div>
   );

@@ -1,6 +1,10 @@
-package com.example.kitchen;
+package com.example.kitchen.customer;
+
+import lombok.Data;
+import lombok.ToString;
 
 // Customer entity class
+@Data
 public class Customer {
 
     private Integer id;
@@ -52,9 +56,5 @@ public class Customer {
         this.email = email;
     }
 
-    @Override
-    public String toString() {
-        return "Customer [id=" + id + ", firstName=" + firstName +
-                ", PassWord=" + password + "]";
-    }
+
 }

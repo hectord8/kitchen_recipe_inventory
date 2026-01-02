@@ -1,5 +1,8 @@
-package com.example.kitchen;
+package com.example.kitchen.customer;
+
+import com.example.kitchen.customer.CustomerDto;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,14 +29,6 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/debug/session")
-    public Object debug(HttpSession session) {
-        System.out.println("Session ID = " + session.getId());
-        System.out.println("customer attr = " + session.getAttribute("customer"));
-        return session.getAttribute("customer");
-    }
-
-
 
     // GET endpoint to fetch all Customers
     @GetMapping("/by-firstname/{firstName}")
@@ -43,9 +38,11 @@ public class CustomerController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<Customer> insert(@RequestBody Customer customer) {
-        String hashed = passwordEncoder.encode(customer.getPassword());
-        customer.setPassword(hashed);
+    public ResponseEntity<Customer> insert(@Valid @RequestBody CustomerDto dto) {
+        Customer customer = new Customer();
+        customer.setFirstName(dto.getFirstName());
+        customer.setEmail(dto.getEmail());
+        customer.setPassword(passwordEncoder.encode(dto.getPassword()));
         Customer saved = CustomerDao.insert(customer);
 
         saved.setPassword(null);

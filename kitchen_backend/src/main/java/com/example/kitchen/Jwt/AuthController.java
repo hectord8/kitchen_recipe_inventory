@@ -1,7 +1,7 @@
 package com.example.kitchen.Jwt;
 
-import com.example.kitchen.Customer;
-import com.example.kitchen.CustomerDAO;
+import com.example.kitchen.customer.Customer;
+import com.example.kitchen.customer.CustomerDAO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
