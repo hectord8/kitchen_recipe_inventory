@@ -23,26 +23,8 @@ export default function CreateRecipe() {
   const creator = customer?.firstName ?? "";
 
 const { token } = useContext(AuthContext);
-
-  async function uploadImage(file) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("http://localhost:8080/uploads", {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    });
-
-    if (!res.ok) throw new Error(await res.text());
-
-    // Expecting backend returns JSON like: { "url": "http://.../files/abc.jpg" }
-    const data = await res.json();
-    return data.url;
-  }
  
   
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -112,7 +94,7 @@ const { token } = useContext(AuthContext);
           </label>
 
           <label className={styles.label}>
-            Category
+            Category <br></br>
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="MAIN">Main</option>
               <option value="SNACK">Snack</option>
@@ -123,11 +105,11 @@ const { token } = useContext(AuthContext);
           </label>
 
           <label className={styles.label}>
-            Diet
+            Diet <br></br>
             <select value={diet} onChange={(e) => setDiet(e.target.value)}>
               <option value="NONE">None</option>
-              <option value="VEGETARIAN">Vegetarian</option>
-              <option value="VEGAN">Vegan</option>
+              <option value="Vegetarian">Vegetarian</option>
+              <option value="Vegan">Vegan</option>
               <option value="GLUTEN_FREE">Gluten-free</option>
               <option value="DAIRY_FREE">Dairy-free</option>
             </select>

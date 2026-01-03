@@ -37,6 +37,7 @@
     background-color: #d2e4c4;
     border: 1px solid rgba(0, 0, 0, 0.12);  
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    padding: 1%;
 }
 
 .form button{
@@ -53,8 +54,44 @@
     
 }
 
+.form textarea {
+  width: 25vw;
+  height: 10vh;
+  padding: 3%;
+}
+
 .createaccount {
   padding: 1%;
   text-decoration: none;
   color: black;
+}
+
+
+@media only screen and (max-width: 1000px) {
+
+  .main {
+    margin-left: 5vw;
+     width: 90vw;
+
+}
+
+.form input{
+ 
+    width: 85vw;
+   
+}
+
+.form button{
+
+    width: 20vw;
+
+    
+    
+}
+
+.form textarea {
+  width: 85vw;
+  height: 10vh;
+  padding: 3%;
+}
 }

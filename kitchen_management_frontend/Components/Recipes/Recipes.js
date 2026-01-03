@@ -8,8 +8,7 @@ import styles from "./page.module.css"; // adjust path if needed
 import { AuthContext } from "../auth";
 
 export default function ClientRecipes() {
-  const { token } = useContext(AuthContext);
-  const { customer, loading: authLoading } = useContext(AuthContext);
+  const { customer, loading: authLoading , token } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Favourites, setFavourties] = useState(false);
@@ -17,14 +16,11 @@ export default function ClientRecipes() {
   const [endpoint, setEndpoint] = useState("");
   const [Diets, setDiets] = useState([]);
   const [Cats, setCats] = useState([]);
-
+  const [search , setSearch]  = useState("");
   const [selectedDiet, setSelectedDiet] = useState("ALL");
   const [selectedCat, setSelectedCat] = useState("ALL");
-
   const [heartedIds, setHeartedIds] = useState(new Set());
-
   const [heartsLoaded, setHeartsLoaded] = useState(false);
-
   const [expandedRecipe, setExpandedRecipe] = useState(null);
 
   useEffect(() => {
@@ -70,7 +66,9 @@ export default function ClientRecipes() {
       });
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Diets`, {
-      credentials: "include",
+       headers: {
+            Authorization: `Bearer ${token}`,
+          },
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -104,13 +102,24 @@ export default function ClientRecipes() {
       });
   }, [Favourites]);
 
-  const filteredRecipes = useMemo(() => {
-    return recipes.filter((r) => {
-      const dietOk = selectedDiet === "ALL" || r.diet === selectedDiet;
-      const catOk = selectedCat === "ALL" || r.category === selectedCat;
-      return dietOk && catOk;
-    });
-  }, [recipes, selectedDiet, selectedCat]);
+ const filteredRecipes = useMemo(() => {
+  const q = search.toLowerCase().trim();
+
+  return recipes.filter((r) => {
+    const searchOk =
+      !q ||
+      r.title?.toLowerCase().includes(q) ||
+      r.description?.toLowerCase().includes(q) ||
+      r.category?.toLowerCase().includes(q) ||
+      r.diet?.toLowerCase().includes(q);
+
+    const dietOk = selectedDiet === "ALL" || r.diet === selectedDiet;
+    const catOk = selectedCat === "ALL" || r.category === selectedCat;
+
+    return searchOk && dietOk && catOk;
+  });
+}, [recipes, selectedDiet, selectedCat, search]);
+
 
   if (loading) return <p>Loading recipes...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -152,9 +161,16 @@ export default function ClientRecipes() {
   return (
     <div className={styles.main}>
       <div className={styles.filter}>
+      
         <div className={styles.filterFixed}>
           
           <h1>Filters</h1>
+            <h4>Search</h4>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search recipes..."
+            />
           <div>
              {customer && (
             <button

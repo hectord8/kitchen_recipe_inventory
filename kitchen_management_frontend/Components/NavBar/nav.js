@@ -8,16 +8,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 export default function Nav() {
   const router = useRouter();
-  const { customer, setCustomer, loading } = useContext(AuthContext);
+  const { customer, setCustomer, loading, setToken} = useContext(AuthContext);
 
   async function logOut() {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-    setCustomer(null);
-    router.push("/");
-  }
+
+  localStorage.removeItem("token");
+  setToken(null);
+  setCustomer(null);
+}
   return (
     <div className={styles.nav}>
       <Link className="link" href="/">
