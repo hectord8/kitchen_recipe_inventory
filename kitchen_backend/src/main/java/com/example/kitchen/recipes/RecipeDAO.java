@@ -2,8 +2,8 @@ package com.example.kitchen.recipes;
 
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
-import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
@@ -13,7 +13,20 @@ import java.util.List;
 public interface RecipeDAO {
 
     @SqlQuery("""
-        SELECT id, title, category, diet, image, prep_time, cook_time, description , creator
+        SELECT
+            id,
+            spoonacular_id AS spoonacularId,
+            title,
+            image,
+            summary,
+            instructions,
+            prep_minutes AS prepMinutes,
+            cook_minutes AS cookMinutes,
+            ready_minutes AS readyMinutes,
+            calories,
+            diet,
+            created_at AS createdAt,
+            creator
         FROM recipes
         ORDER BY id DESC
     """)
@@ -27,23 +40,46 @@ public interface RecipeDAO {
     """)
     List<String> getAllDiets();
 
-    @SqlQuery("""
-        SELECT DISTINCT TRIM(category)
-        FROM recipes
-        WHERE category IS NOT NULL AND TRIM(category) <> ''
-        ORDER BY TRIM(category)
-    """)
-    List<String> getAllCats();
-
     @SqlUpdate("""
-        INSERT INTO recipes (title, category, diet, image, prep_time, cook_time, description , creator)
-        VALUES (:title, :category, :diet, :image, :prepTime, :cookTime, :description , :creator)
+        INSERT INTO recipes (
+            spoonacular_id,
+            title,
+            image,
+            summary,
+            instructions,
+            prep_minutes,
+            cook_minutes,
+            ready_minutes,
+            calories,
+            diet,
+            creator
+        )
+        VALUES (
+            :spoonacularId,
+            :title,
+            :image,
+            :summary,
+            :instructions,
+            :prepMinutes,
+            :cookMinutes,
+            :readyMinutes,
+            :calories,
+            :diet,
+            :creator
+        )
     """)
     @GetGeneratedKeys
     Recipe insert(@BindBean Recipe recipe);
 
-    @SqlUpdate("DELETE FROM recipes WHERE id = :id")
-    void deleteById(@Bind("id") int id);
 
 
+
+    @SqlQuery("""
+        SELECT EXISTS(
+            SELECT 1
+            FROM recipes
+            WHERE spoonacular_id = :spoonacularId
+        )
+    """)
+    boolean existsBySpoonacularId(@Bind("spoonacularId") int spoonacularId);
 }

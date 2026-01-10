@@ -26,4 +26,10 @@ public class JdbiConfig {
     public com.example.kitchen.recipes.RecipeDAO RecipeDAO(Jdbi jdbi) {
         return jdbi.onDemand(com.example.kitchen.recipes.RecipeDAO.class);
     }
+
+    @Bean
+    public com.example.kitchen.inventory.InventoryDAO InventoryDAO(Jdbi jdbi) {
+        return jdbi.onDemand(com.example.kitchen.inventory.InventoryDAO.class);
+    }
+
 }

@@ -2,9 +2,12 @@ package com.example.kitchen.Jwt;
 
 import com.example.kitchen.customer.Customer;
 import com.example.kitchen.customer.CustomerDAO;
+import com.example.kitchen.customer.CustomerDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.example.kitchen.Jwt.JwtService;
 
 import java.util.Map;
 
@@ -15,6 +18,7 @@ public class AuthController {
     private final CustomerDAO customerDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+
 
     public AuthController(CustomerDAO customerDao, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.customerDao = customerDao;
@@ -56,6 +60,9 @@ public class AuthController {
         db.setPassword(null);
         return ResponseEntity.ok(db);
     }
+
+
+
 
 
 }

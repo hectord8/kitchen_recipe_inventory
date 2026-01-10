@@ -1,6 +1,7 @@
 package com.example.kitchen.recipes;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -11,11 +12,18 @@ import java.util.List;
 @RequestMapping("/recipes")
 public class RecipeController {
 
-    @Autowired
-    private final RecipeDAO recipeDao;
+    @Value("${spoonacular.base-url}")
+    private String spoonacularBaseUrl;
 
-    public RecipeController(RecipeDAO recipeDao) {
+    @Value("${spoonacular.api-key}")
+    private String spoonacularApiKey;
+
+    private final RecipeDAO recipeDao;
+    private final RecipeImportService importService;
+
+    public RecipeController(RecipeDAO recipeDao , RecipeImportService importService) {
         this.recipeDao = recipeDao;
+        this.importService = importService;
     }
 
 
@@ -25,15 +33,10 @@ public class RecipeController {
         return recipeDao.getAllRecipes();
     }
 
-    @GetMapping("/Diets")
-    public List<String> getAllDiets() {
-        return recipeDao.getAllDiets();
-    }
-
-    @GetMapping("/Category")
-    public List<String> getAllCats() {
-        return recipeDao.getAllCats();
-    }
+//    @GetMapping("/Diets")
+//    public List<String> getAllDiets() {
+//        return recipeDao.getAllDiets();
+//    }
 
     @PostMapping("/recipes")
     public ResponseEntity<Recipe> insert(@RequestBody Recipe recipe) {
@@ -41,4 +44,5 @@ public class RecipeController {
 
         return ResponseEntity.ok(saved);
     }
+
 }

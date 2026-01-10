@@ -8,23 +8,21 @@ import styles from "./page.module.css"; // adjust path if needed
 import { AuthContext } from "../auth";
 
 export default function ClientRecipes() {
-  const { customer, loading: authLoading , token } = useContext(AuthContext);
+  const { customer, loading: authLoading, token } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Favourites, setFavourties] = useState(false);
   const [error, setError] = useState("");
-  const [endpoint, setEndpoint] = useState("");
-  const [Diets, setDiets] = useState([]);
-  const [Cats, setCats] = useState([]);
-  const [search , setSearch]  = useState("");
+
+  const [search, setSearch] = useState("");
   const [selectedDiet, setSelectedDiet] = useState("ALL");
-  const [selectedCat, setSelectedCat] = useState("ALL");
   const [heartedIds, setHeartedIds] = useState(new Set());
   const [heartsLoaded, setHeartsLoaded] = useState(false);
   const [expandedRecipe, setExpandedRecipe] = useState(null);
+  const [maxCookTime, setSelectedCookTime] = useState(999);
+  const [maxPrepTime, setSelectedPrepTime] = useState(999);
 
   useEffect(() => {
- 
     if (!customer) return;
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
@@ -64,62 +62,48 @@ export default function ClientRecipes() {
         setError(e.message || "Failed to load recipes");
         setLoading(false);
       });
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Diets`, {
-       headers: {
-            Authorization: `Bearer ${token}`,
-          },
-    })
-      .then(async (r) => {
-        if (!r.ok) throw new Error(await r.text());
-        return r.json();
-      })
-      .then((data) => {
-        setDiets(data || []);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message || "Failed to load recipes");
-        setLoading(false);
-      });
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/Category`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (r) => {
-        if (!r.ok) throw new Error(await r.text());
-        return r.json();
-      })
-      .then((data) => {
-        setCats(data || []);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message || "Failed to load recipes");
-        setLoading(false);
-      });
   }, [Favourites]);
 
- const filteredRecipes = useMemo(() => {
-  const q = search.toLowerCase().trim();
 
-  return recipes.filter((r) => {
-    const searchOk =
-      !q ||
-      r.title?.toLowerCase().includes(q) ||
-      r.description?.toLowerCase().includes(q) ||
-      r.category?.toLowerCase().includes(q) ||
-      r.diet?.toLowerCase().includes(q);
+const normalize = (s) => String(s ?? "").trim().toLowerCase();
 
-    const dietOk = selectedDiet === "ALL" || r.diet === selectedDiet;
-    const catOk = selectedCat === "ALL" || r.category === selectedCat;
+const parseDiets = (dietField) =>
+  String(dietField ?? "")
+    .split(",")
+    .map((d) => normalize(d))
+    .filter(Boolean);
 
-    return searchOk && dietOk && catOk;
-  });
-}, [recipes, selectedDiet, selectedCat, search]);
+const Diets = useMemo(() => {
+  const set = new Set();
+  recipes.forEach((r) => parseDiets(r.diet).forEach((d) => set.add(d)));
+  return [...set].sort();
+}, [recipes]);
 
+  const filteredRecipes = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    const selectedDietNorm = normalize(selectedDiet);
+
+    return recipes.filter((r) => {
+      const searchOk =
+        !q ||
+        r.title?.toLowerCase().includes(q) ||
+        r.description?.toLowerCase().includes(q) ||
+        r.diet?.toLowerCase().includes(q);
+      
+        
+      const recipeDiets = parseDiets(r.diet);
+      const dietOk = selectedDietNorm === "all" || recipeDiets.includes(selectedDietNorm);
+    
+
+      const prep = Number(r.prepMinutes ?? 0);
+      const prepOk = prep <= maxPrepTime;
+
+      const cook = Number(r.cookMinutes ?? 0);
+      const cookOk = cook <= maxCookTime;
+
+      return searchOk && dietOk  && prepOk && cookOk;
+    });
+  }, [recipes, selectedDiet, search, maxPrepTime, maxCookTime]);
 
   if (loading) return <p>Loading recipes...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -147,6 +131,7 @@ export default function ClientRecipes() {
       if (!res.ok) {
         throw new Error("Failed to update saved recipe");
       }
+      console.log(res.ok);
     } catch (err) {
       console.error(err);
 
@@ -161,27 +146,25 @@ export default function ClientRecipes() {
   return (
     <div className={styles.main}>
       <div className={styles.filter}>
-      
         <div className={styles.filterFixed}>
-          
           <h1>Filters</h1>
-            <h4>Search</h4>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search recipes..."
-            />
+          <h4>Search</h4>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search recipes..."
+          />
           <div>
-             {customer && (
-            <button
-              type="button"
-              onClick={() => setFavourties((prev) => !prev)}
-            >
-              {Favourites ? "Show All" : "Favourites"}
-            </button>
-              )}
+            {customer && (
+              <button
+                type="button"
+                onClick={() => setFavourties((prev) => !prev)}
+              >
+                {Favourites ? "Show All" : "Favourites"}
+              </button>
+            )}
           </div>
-      
+
           <div>
             <h2>Diets</h2>
             <button type="button" onClick={() => setSelectedDiet("ALL")}>
@@ -204,25 +187,27 @@ export default function ClientRecipes() {
           </div>
 
           <div>
-            <h2>Categories</h2>
+            <h2> Max Prep Time {maxPrepTime} </h2>
+            <input
+              type="range"
+              min={0}
+              max={40}
+              step={1}
+              value={maxPrepTime}
+              onChange={(e) => setSelectedPrepTime(Number(e.target.value))}
+            ></input>
+          </div>
+          <div>
+            <h2>Max Cook Time : {maxCookTime}</h2>
 
-            <button type="button" onClick={() => setSelectedCat("ALL")}>
-              All Cats
-            </button>
-            <div className={styles.filterButtons}>
-              {Cats.map((Cats) => (
-                <div key={Cats}>
-                  <button
-                    onClick={() => setSelectedCat(Cats)}
-                    style={{
-                      color: selectedCat === Cats ? "red" : "black",
-                    }}
-                  >
-                    {Cats}
-                  </button>
-                </div>
-              ))}
-            </div>
+            <input
+              type="range"
+              min={0}
+              max={120}
+              step={5}
+              value={maxCookTime}
+              onChange={(e) => setSelectedCookTime(Number(e.target.value))}
+            ></input>
           </div>
           {customer && (
             <Link className={styles.publish} href="/CreateRecipe">
@@ -235,7 +220,7 @@ export default function ClientRecipes() {
       <div className={styles.body}>
         {filteredRecipes.map((recipe) => {
           const isHearted = heartedIds.has(recipe.id);
-          
+
           return (
             <div
               key={recipe.id}
@@ -256,7 +241,7 @@ export default function ClientRecipes() {
 
               <div className={styles.imageContainer}>
                 <Image
-                  src={recipe.imageUrl || "/burger.jpg"}
+                  src={recipe.image || "/burger.jpg"}
                   sizes="100vw"
                   fill
                   alt={recipe.title || "Recipe image"}
@@ -264,13 +249,14 @@ export default function ClientRecipes() {
               </div>
 
               <h2>{recipe.title}</h2>
-              <h4>{recipe.category}</h4>
+
               <h4>{recipe.diet}</h4>
 
-              <h5>Prep Time:{recipe.prepTime}</h5>
-              <h5>Cook Time:{recipe.cookTime}</h5>
+              <h5>Prep Time:{recipe.prepMinutes}</h5>
+              <h5>Cook Time:{recipe.cookMinutes}</h5>
 
-              <h5>Total Time: {recipe.prepTime + recipe.cookTime} </h5>
+              <h5>Total Time: {recipe.readyMinutes} </h5>
+              {expandedRecipe === recipe.id && <p>{recipe.summary}</p>}
               <button
                 className={styles.details}
                 onClick={() =>
@@ -281,7 +267,8 @@ export default function ClientRecipes() {
               >
                 {expandedRecipe === recipe.id ? "See less" : "See more"}
               </button>
-              <p>Created by {recipe.creator} </p>
+
+              <p>Created by {recipe.creator}. </p>
             </div>
           );
         })}

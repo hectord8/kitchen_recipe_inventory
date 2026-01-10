@@ -1,57 +1,157 @@
 package com.example.kitchen.recipes;
 
+import java.time.LocalDateTime;
+
 public class Recipe {
 
+
     private Integer id;
+    private Integer spoonacularId;
     private String title;
-    private String category;
-    private String diet;
     private String image;
-    private Integer prepTime;
-    private Integer cookTime;
-    private String description;
+    private String summary;
+    private String instructions;
+    private Integer prepMinutes;
+    private Integer cookMinutes;
+    private Integer readyMinutes;
+    private Integer calories;
+    private String diet;
+    private LocalDateTime createdAt;
     private String creator;
+
 
     public Recipe() {}
 
-    public Recipe(Integer id, String title, String category, String diet, String image,
-                  Integer prepTime, Integer cookTime, String description , String creator) {
-        this.id = id;
+
+    public Recipe(
+            Integer spoonacularId,
+            String title,
+            String image,
+            String summary,
+            String instructions,
+            Integer prepMinutes,
+            Integer cookMinutes,
+            Integer readyMinutes,
+            Integer calories,
+            String diet,
+            String creator
+    ) {
+        this.spoonacularId = spoonacularId;
         this.title = title;
-        this.category = category;
-        this.diet = diet;
         this.image = image;
-        this.prepTime = prepTime;
-        this.cookTime = cookTime;
-        this.description = description;
+        this.summary = summary;
+        this.instructions = instructions;
+        this.prepMinutes = prepMinutes;
+        this.cookMinutes = cookMinutes;
+        this.readyMinutes = readyMinutes;
+        this.calories = calories;
+        this.diet = diet;
         this.creator = creator;
     }
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    // ===== Getters & Setters =====
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getDiet() { return diet; }
-    public void setDiet(String diet) { this.diet = diet; }
+    public Integer getSpoonacularId() {
+        return spoonacularId;
+    }
 
-    public String getImage() { return image; }
-    public void setImage(String image) { this.image = image; }
+    public void setSpoonacularId(Integer spoonacularId) {
+        this.spoonacularId = spoonacularId;
+    }
 
-    public Integer getPrepTime() { return prepTime; }
-    public void setPrepTime(Integer prepTime) { this.prepTime = prepTime; }
+    public String getTitle() {
+        return title;
+    }
 
-    public Integer getCookTime() { return cookTime; }
-    public void setCookTime(Integer cookTime) { this.cookTime = cookTime; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getImage() {
+        return image;
+    }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
 
-    public String getCreator(){ return creator ;}
-    public void setCreator(String creator) { this.creator = creator;}
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public Integer getPrepMinutes() {
+        return prepMinutes;
+    }
+
+    public void setPrepMinutes(Integer prepMinutes) {
+        this.prepMinutes = prepMinutes;
+    }
+
+    public Integer getCookMinutes() {
+        return cookMinutes;
+    }
+
+    public void setCookMinutes(Integer cookMinutes) {
+        this.cookMinutes = cookMinutes;
+    }
+
+    public Integer getReadyMinutes() {
+        return readyMinutes;
+    }
+
+    public void setReadyMinutes(Integer readyMinutes) {
+        this.readyMinutes = readyMinutes;
+    }
+
+    public Integer getCalories() {
+        return calories;
+    }
+
+    public void setCalories(Integer calories) {
+        this.calories = calories;
+    }
+
+    public String getDiet() {
+        return diet;
+    }
+
+    public void setDiet(String diet) {
+        this.diet = diet;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 }

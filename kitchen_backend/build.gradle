@@ -19,11 +19,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-h2console'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
@@ -35,11 +33,10 @@ dependencies {
     implementation "org.jdbi:jdbi3-core:3.45.1"
     implementation "org.jdbi:jdbi3-sqlobject:3.45.1"
     implementation "org.jdbi:jdbi3-spring5:3.45.1"
-    runtimeOnly "com.h2database:h2"
 
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
-    runtimeOnly  'io.jsonwebtoken:jjwt-impl:0.13.0'
-    runtimeOnly  'io.jsonwebtoken:jjwt-jackson:0.13.0' // JSON for claims
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -49,6 +46,10 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    implementation 'com.auth0:java-jwt:4.4.0'
+
 
 }
 

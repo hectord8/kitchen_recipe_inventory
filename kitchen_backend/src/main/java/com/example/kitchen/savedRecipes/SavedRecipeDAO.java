@@ -39,7 +39,7 @@ public interface SavedRecipeDAO {
 
     @RegisterBeanMapper(Recipe.class)
     @SqlQuery("""
-          SELECT r.id, r.title, r.category, r.diet, r.image AS imageUrl
+          SELECT r.id, r.title, r.diet, r.image AS imageUrl
           FROM recipes r
           JOIN Customer_saved_recipes s ON s.recipe_id = r.id
           WHERE s.customer_id = :customerId

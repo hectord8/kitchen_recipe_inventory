@@ -1,70 +1,47 @@
-.nav{
-    background-color: #b5cbb7;
-    display: flex;
-    position: fixed;
-    min-height: 80px;
-    width: 100vw;
-    z-index: 100;
+/* background-color: #b5cbb7;
+     background-color: #818479  ;
+    border: 2px solid #d2e4c4  ;
+    color: #818479 ; */
+
+.nav {
+background-color: #b5cbb7;
+  height: 10vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+   align-items: center;
 }
 
-.customer{
-    position: absolute;
-    height: 50px;
-    
-  
-    padding: 1vh;
-    margin-left: 85vw;
-   
-}
-.customer h3{
-    color:#818479 ;
-    margin-top: 1vh;
-    text-align: center;
+.imageContainer {
+  margin-left: 3vw;
+  position: relative;
+  height: 10vh;
+  aspect-ratio: 19 / 9;
+  bottom: 4vh;
+
 }
 
-.customer span{
+.customer {
     display: flex;
     flex-direction: column;
+  margin-right: 5vw;
 
-    height: 20vh;
 }
 
 
+
+.signedIn {
+  margin-top: 0%;
+  text-align: center;
+ 
+}
 
 .login{
-    background-color: #818479  ;
-    min-width: fit-content;
-    margin: 1vh;
-   
-    width: 80px;
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border: 1px black solid;
     border-radius: 4px;
-    border: 2px solid #d2e4c4  ;
-    height: 30px;
-    text-align: center;
-    padding: 3%;
-    
-    text-decoration: none;
-    color: #b5cbb7 ;
-}
-
-.imageContainer{
-    position: relative;
-    height: 80px;
-    width: 200px;
-    
-}
-
-.favs{
-    text-decoration: none;
-     color: #818479 ;
-     font-size: 30px;
-}
-
-@media only screen and ( max-width: 800px) {
-.customer{
-    
-    margin-left: 70vw;
-   
-}
+    font-size: 20px;
 
 }
