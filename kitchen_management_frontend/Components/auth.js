@@ -19,11 +19,12 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     const stored = localStorage.getItem("token");
     if (!stored) {
-      setLoading(false);
-      return;
+      // Use setTimeout to avoid synchronous setState
+      const timeoutId = setTimeout(() => setLoading(false), 0);
+      return () => clearTimeout(timeoutId);
     }
 
-    setTokenState(stored);
+    setTimeout(() => setTokenState(stored), 0);
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${stored}` },

@@ -17,7 +17,7 @@ export default function AdminPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/recipes/import?count=100`,
+        `${process.env.NEXT_PUBLIC_API_URL}/recipes/import?count=5`,
         {
           method: "POST",
           headers: {
@@ -29,7 +29,6 @@ export default function AdminPage() {
       );
 
       const data = await res.json().catch(() => null);
-
       if (!res.ok) {
         throw new Error(
           (data && (data.message || data.error)) || `Request failed: ${res.status}`

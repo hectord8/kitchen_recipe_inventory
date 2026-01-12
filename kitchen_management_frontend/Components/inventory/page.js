@@ -28,8 +28,6 @@ export default function Inventory() {
       .then((r) => (r.ok ? r.json() : []))
       .then((items) => {
         setItems(items);
-        const ids = items.map((r) => r.id);
-        console.log("Extracted ids:", ids);
       });
   }, [customer, token]);
 
@@ -38,7 +36,6 @@ export default function Inventory() {
     setError("");
 
     try {
-      console.log("customer id " + customer.id);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/inventory/items`,
         {
@@ -88,7 +85,6 @@ export default function Inventory() {
   }
 
   async function increaseQuantity(item_id) {
-    console.log("increase id " + item_id);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${item_id}/increase`,
@@ -109,7 +105,6 @@ export default function Inventory() {
         )
       );
     } catch (err) {
-      console.log(err);
       setError(err.message);
     }
   }

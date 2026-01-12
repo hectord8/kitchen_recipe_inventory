@@ -33,6 +33,7 @@ public class RecipeImportService {
                     + "?number=" + count
                     + "&addRecipeInformation=true"
                     + "&includeNutrition=true"
+                    + "&author"
                     + "&apiKey=" + spoonacularApiKey;
 
             HttpRequest req = HttpRequest.newBuilder()

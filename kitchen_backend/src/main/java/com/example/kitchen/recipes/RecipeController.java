@@ -45,4 +45,16 @@ public class RecipeController {
         return ResponseEntity.ok(saved);
     }
 
+    @PostMapping("/import")
+    public ResponseEntity<ImportResult> importRecipes(
+            @RequestParam(defaultValue = "5") int count
+    ) {
+        // optional safety clamp
+        if (count < 1) count = 1;
+        if (count > 50) count = 50; // Spoonacular typically allows up to 100, but 50 is a nice safe limit
+
+        ImportResult result = importService.importRandomRecipes(count);
+        return ResponseEntity.ok(result);
+    }
+
 }

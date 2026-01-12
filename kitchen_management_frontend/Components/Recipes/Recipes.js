@@ -33,7 +33,6 @@ export default function ClientRecipes() {
       .then((r) => (r.ok ? r.json() : []))
       .then((recipes) => {
         const ids = recipes.map((r) => r.id);
-        console.log("Extracted ids:", ids);
         setHeartedIds(new Set(ids.map(Number)));
         setHeartsLoaded(true);
       })
@@ -131,9 +130,7 @@ const Diets = useMemo(() => {
       if (!res.ok) {
         throw new Error("Failed to update saved recipe");
       }
-      console.log(res.ok);
     } catch (err) {
-      console.error(err);
 
       setHeartedIds((prev) => {
         const next = new Set(prev);

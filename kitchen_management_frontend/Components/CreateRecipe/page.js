@@ -44,7 +44,7 @@ const { token } = useContext(AuthContext);
       }
       
 
-       console.log(creator);
+
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/recipes`, {
         method: "POST",
