@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState, createContext } from "react";
 
 export const AuthContext = createContext(null);
@@ -8,7 +9,7 @@ export default function AuthProvider({ children }) {
   const [customer, setCustomer] = useState(null);
   const [token, setTokenState] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   const setToken = (t) => {
     setTokenState(t);
     if (t) localStorage.setItem("token", t);
@@ -37,6 +38,7 @@ export default function AuthProvider({ children }) {
           localStorage.removeItem("token");
           setTokenState(null);
           setCustomer(null);
+          router.push("/"); 
         } else {
           setCustomer(data);
         }

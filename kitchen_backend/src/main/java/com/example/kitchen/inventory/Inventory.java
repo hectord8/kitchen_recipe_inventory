@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class Inventory {
 
-    private Integer item_id;
-    private Integer customer_Id;
+    private Integer itemId;
+    private Integer customerId;
     private String item;
     private String description;
     private String image;
@@ -15,9 +15,9 @@ public class Inventory {
 
     public Inventory(){}
 
-    public Inventory(Integer item_id , Integer customer_Id ,String item, String description, String image, Integer quantity){
-        this.customer_Id = customer_Id;
-        this.item_id = item_id;
+    public Inventory(Integer itemId , Integer customerId ,String item, String description, String image, Integer quantity){
+        this.customerId = customerId;
+        this.itemId = itemId;
         this.item = item;
         this.description = description;
         this.image = image;
@@ -49,19 +49,19 @@ public class Inventory {
     }
 
     public Integer getCustomerId() {
-        return customer_Id;
+        return customerId;
     }
 
-    public void setCustomerId(Integer customer_Id) {
-        this.customer_Id = customer_Id;
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public Integer getItem_id() {
-        return item_id;
+        return itemId;
     }
 
     public void setItem_id(Integer item_id) {
-        this.item_id = item_id;
+        this.itemId = item_id;
     }
 
     public String getDescription() {

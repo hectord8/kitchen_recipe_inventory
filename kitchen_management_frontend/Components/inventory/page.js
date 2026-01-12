@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import styles from "./inventory.module.css";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useMemo } from "react";
+
 import { AuthContext } from "../auth";
 
 export default function Inventory() {
@@ -56,19 +57,33 @@ export default function Inventory() {
         }
       );
 
-      console.log("res " + res);
-      if (!res.ok) throw new Error(await res.text());
-      const savedItem = await res.json();
+      const text = await res.text();
+      let payload;
+      try {
+        payload = text ? JSON.parse(text) : null;
+      } catch {
+        payload = text;
+      }
+
+      if (!res.ok) {
+        const msg = payload?.errors
+          ? Object.entries(payload.errors)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(", ")
+          : payload?.message ||
+            (typeof payload === "string" && payload) ||
+            "Request failed";
+        throw new Error(msg);
+      }
+
+      const savedItem = payload;
 
       setItems((prev) => [...prev, savedItem]);
       setItem("");
       setDescription("");
       setQuantity("");
-
-      router.push("/");
     } catch (err) {
-      console.log("error " + err);
-      setError(err.message || "Failed to create recipe");
+      setError(err?.message || "Request failed");
     }
   }
 
@@ -86,19 +101,29 @@ export default function Inventory() {
         }
       );
       if (!res.ok) throw new Error(await res.text());
-      
-    console.log("quantity returned:", await res.json());
 
+      const newQty = await res.json();
+      setItems((prev) =>
+        prev.map((it) =>
+          it.item_id === item_id ? { ...it, quantity: newQty } : it
+        )
+      );
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError(err.message);
     }
   }
-  async function decreaseQuantity(item_id) {
-    console.log("decrease id " + item_id);
+  async function decreaseQuantity(item_id, currentQty) {
+    if (currentQty === 1) {
+      const confirmed = window.confirm(
+        "This will remove the item from your inventory. Continue?"
+      );
+
+      if (!confirmed) return;
+    }
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/item/${item_id}/decrease`,
+        `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${item_id}/decrease`,
         {
           method: "PATCH",
           headers: {
@@ -108,17 +133,57 @@ export default function Inventory() {
         }
       );
       if (!res.ok) throw new Error(await res.text());
+      const newQty = await res.json();
+      setItems((prev) => {
+        if (newQty === 0) {
+          return prev.filter((it) => it.item_id !== item_id);
+        }
+
+        return prev.map((it) =>
+          it.item_id === item_id ? { ...it, quantity: newQty } : it
+        );
+      });
     } catch (err) {
       setError(err.message);
     }
   }
+async function uploadReceipt(e) {
+  e.preventDefault();
+  setError("");
+
+  if (!image) {
+    setError("No file detected");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", image);
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      throw new Error(data?.message || "Upload failed");
+    }
+
+
+  } catch (err) {
+    setError(err?.message || "Upload failed");
+  }
+}
+
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <div className={styles.body}>
+          <h2>Inventory</h2>
           <form className={styles.create}>
-            <h2>Inventory</h2>
             <input
               value={item}
               placeholder="item name"
@@ -135,8 +200,18 @@ export default function Inventory() {
               placeholder="Amount "
               onChange={(e) => setQuantity(e.target.value)}
             ></input>
+
             <button onClick={handleSubmit}>create</button>
           </form>
+          <form styles={styles.receipt}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+            ></input>
+            <button onClick={uploadReceipt}>get data from receipt</button>
+          </form>
+          <p>{error}</p>
 
           <div className={styles.items}>
             <table className={styles.table}>
@@ -147,7 +222,6 @@ export default function Inventory() {
                   <th>quantity</th>
                 </tr>
                 {items.map((row) => {
-                  console.log("row id " + row.item_id);
                   return (
                     <tr key={row.item_id} className={styles.card}>
                       <td>{row.item}</td>
@@ -157,7 +231,11 @@ export default function Inventory() {
                           +
                         </button>{" "}
                         {row.quantity}{" "}
-                        <button onClick={() => decreaseQuantity(row.item_id)}>
+                        <button
+                          onClick={() =>
+                            decreaseQuantity(row.item_id, row.quantity)
+                          }
+                        >
                           -
                         </button>{" "}
                       </td>

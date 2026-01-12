@@ -3,8 +3,10 @@
     height: fit-content;
     width: 80vw;
     margin-left: 10vw;
-    background-color: red;
+  
+    border-radius: 2px;
     padding: 2%;
+    justify-items: center;
 }
 
 
@@ -12,21 +14,27 @@
 
 .create{
     height: 10vh;
+    width: 100vw;
+    margin-top: 5%;
+    margin-left: 35vw;
 }
 
 .tableHeaders{
     width: 75vw;
     display: flex;
     justify-content: space-between;
+      border: 1px grey solid;
+      padding: 5px;
 }
 
 .card{
-    height: 10vh;
+    height: 5vh;
     width: 100%;
-    background-color: blue;
+    
     padding: 2%;
     display: flex;
     justify-content: space-between;
-    border: 1px solid black;
+    border: 1px solid grey;
+    border-top: none;
     
 }

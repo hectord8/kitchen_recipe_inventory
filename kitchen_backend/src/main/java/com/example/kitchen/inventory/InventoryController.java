@@ -1,27 +1,37 @@
 package com.example.kitchen.inventory;
 
 
-import com.example.kitchen.recipes.Recipe;
+import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
     private final InventoryDAO dao;
+    private final OcrService ocrService;
 
-
-    public InventoryController(InventoryDAO dao){
+    public InventoryController(InventoryDAO dao , OcrService ocrService) {
         this.dao = dao;
+        this.ocrService = ocrService;
 
     }
 
     @PostMapping("/items")
-    public ResponseEntity<Inventory> insert(@RequestBody Inventory inventory){
-        Inventory saved = dao.insert(inventory);
+    public ResponseEntity<Inventory> insert(@Valid @RequestBody InventoryDTO dto) {
+        Inventory inventory = new Inventory();
+        inventory.setItem(dto.getItem());
+        inventory.setCustomerId(dto.getCustomerId());
+        inventory.setDescription(dto.getDescription());
+        inventory.getImage();
+        inventory.setQuantity(dto.getQuantity());
 
+        Inventory saved = dao.insert(inventory);
         return ResponseEntity.ok(saved);
     }
 
@@ -45,23 +55,30 @@ public class InventoryController {
     }
 
     @PatchMapping("/item/{itemsId}/increase")
-    public ResponseEntity<Inventory> increaseQuantity(
+    public int increaseQuantity(
             @PathVariable("itemsId") int itemsId
     ) {
-       Inventory increased =  dao.increaseQuantity(itemsId);
 
-        return ResponseEntity.ok(increased);
+
+        return dao.increaseQuantity(itemsId);
     }
 
     @PatchMapping("/item/{itemsId}/decrease")
-    public ResponseEntity<Inventory>  decreaseQuantity(
+    public int decreaseQuantity(
             @PathVariable("itemsId") int itemsId
     ) {
-         Inventory decreased = dao.decreaseQuantity(itemsId);
-         return ResponseEntity.ok(decreased);
+
+        return dao.decreaseQuantity(itemsId);
     }
 
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> upload(
 
+            @RequestPart("file") MultipartFile file
+    ) {
+        String text = ocrService.parse(file);
+        return ResponseEntity.ok(Map.of("text", text));
+    }
 
 
 }

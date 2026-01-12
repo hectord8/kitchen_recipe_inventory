@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.sql.DataSource;
 
@@ -30,6 +31,11 @@ public class JdbiConfig {
     @Bean
     public com.example.kitchen.inventory.InventoryDAO InventoryDAO(Jdbi jdbi) {
         return jdbi.onDemand(com.example.kitchen.inventory.InventoryDAO.class);
+    }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 
 }

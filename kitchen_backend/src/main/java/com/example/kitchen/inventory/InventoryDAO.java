@@ -8,9 +8,8 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
-import java.util.List;
 
-import com.example.kitchen.inventory.InventoryDTO;
+import java.util.List;
 
 @RegisterBeanMapper(Inventory.class)
 public interface InventoryDAO {
@@ -23,7 +22,7 @@ public interface InventoryDAO {
                 quantity
             )
             VALUES(
-                :customer_Id,
+                :customerId,
                 :item,
                 :description,
                 :image,
@@ -53,33 +52,35 @@ public interface InventoryDAO {
                     SELECT quantity, item_id
                     from inventory
                     where item_id = :itemId
-                 
+            
             """)
     @RegisterConstructorMapper(InventoryDTO.QuantityResponse.class)
     InventoryDTO.QuantityResponse getQuantityByItemId(@Bind("itemId") int itemId);
 
     @SqlQuery("""
                     UPDATE inventory set quantity = quantity + 1
-             
+            
                     where item_id = :itemId
-                     AND quantity > 0
+                     AND quantity >= 0
                      RETURNING quantity;
-                 
+            
             """)
-
-    Inventory increaseQuantity(@Bind("itemId") int itemId);
+    int increaseQuantity(@Bind("itemId") int itemId);
 
     @SqlQuery("""
-                    UPDATE inventory set quantity = quantity - 1
-             
+                    UPDATE inventory 
+                    set quantity = quantity - 1
+            
                     where item_id = :itemId
                      AND quantity > 0
                      RETURNING quantity;
-                 
+                     
+                     DELETE FROM inventory
+                     where quantity <= 0
+                     
+            
             """)
-
-    Inventory decreaseQuantity(@Bind("itemId") int itemId);
-
+    int decreaseQuantity(@Bind("itemId") int itemId);
 
 
 }
