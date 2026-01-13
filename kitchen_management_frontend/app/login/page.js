@@ -2,64 +2,71 @@
 import Link from "next/link";
 import styles from "./login.module.css";
 import { useRouter } from "next/navigation";
-import { useState , useContext} from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "@/Components/auth";
 
-import { redirect, RedirectType } from 'next/navigation'
-
-
-
 export default function Login() {
-    const router = useRouter();
-  const { setCustomer } = useContext(AuthContext);
-   const { setToken } = useContext(AuthContext);
+  const router = useRouter();
+  const { setCustomer, setToken } = useContext(AuthContext);
+
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function login() {
+  async function login(e) {
+    e.preventDefault();
     setError("");
-    setCustomer(null);
+    setIsSubmitting(true);
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
-
       });
 
       if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || `Login failed (${res.status})`);
+        setError("Invalid email or password");
+        return;
       }
 
-            
       const data = await res.json().catch(() => null);
       if (!data) throw new Error("No customer returned from server");
 
       setToken(data.token);
       setCustomer(data.customer);
-       router.push("/"); 
-        router.refresh();
+      router.push("/");
+      router.refresh();
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError("Unable to log in right now. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    
   }
+
 
   return (
     <div className={styles.page}>
       <div className={styles.main}>
         <h2>Login</h2>
+        <p className={styles.helper}>Sign in to access your inventory and saved recipes.</p>
 
-        {error && <p style={{ color: "black" }}>{error}</p>}
+        {error && (
+          <p className={styles.errorBox} role="alert" aria-live="polite">
+            {error}
+          </p>
+        )}
 
-        <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+        <form className={styles.form} onSubmit={login}>
           <input
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            autoComplete="email"
+            inputMode="email"
+            required
           />
 
           <input
@@ -67,18 +74,23 @@ export default function Login() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
           />
 
-          <button type="button" onClick={login}>
-            Login
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p>If you dont have an account  
-          <Link  className={styles.createaccount} href="/CreateAccount">
-               - Create one
-            </Link> 
+
+        <p>
+          If you don&apos;t have an account
+          <Link className={styles.createaccount} href="/CreateAccount">
+            - Create one
+          </Link>
         </p>
+
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export default function Nav() {
   }
   return (
     <div className={styles.nav}>
-      <Link className="link" href="/">
+      <Link className={styles.logoLink} href="/">
         <div className={styles.imageContainer}>
           <Image
             src="/logo.png"
@@ -28,14 +28,15 @@ export default function Nav() {
           />
         </div>
       </Link>
-      {!loading && customer &&(
-         <Link href="/inventory" className="link">Inventory</Link>
+      {!loading && customer && (
+        <Link href="/inventory" className={styles.link}>
+          Inventory
+        </Link>
       )}
       {!loading && customer && customer.firstName === "hector" && (
-        <Link className="link" href="/admin">
+        <Link className={styles.link} href="/admin">
           Admin
         </Link>
-        
       )}
 
       <div className={`${styles.customer} ${customer ? styles.signedIn : ""}`}>
@@ -50,7 +51,7 @@ export default function Nav() {
         )}
         {!customer && (
           <span>
-            <Link className="link" href="/login">
+            <Link className={styles.link} href="/login">
               Login
             </Link>
           </span>

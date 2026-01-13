@@ -1,12 +1,12 @@
 "use client";
 
 import styles from "./create.module.css";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../auth";
 
 export default function CreateRecipe() {
-  const { customer } = useContext(AuthContext);
+  const { customer, token } = useContext(AuthContext);
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -15,17 +15,15 @@ export default function CreateRecipe() {
   const [prepTime, setPrepTime] = useState("");
   const [cookTime, setCookTime] = useState("");
   const [description, setDescription] = useState("");
-  
+
   const [imageFile, setImageFile] = useState(null);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const creator = customer?.firstName ?? "";
 
-const { token } = useContext(AuthContext);
- 
-  
   async function handleSubmit(e) {
+
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -140,7 +138,8 @@ const { token } = useContext(AuthContext);
 
    
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <p className="errorText">{error}</p>}
+
 
           <button type="submit" disabled={loading}>
             {loading ? "Uploading..." : "Upload"}

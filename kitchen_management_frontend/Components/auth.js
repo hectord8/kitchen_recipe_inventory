@@ -46,7 +46,7 @@ export default function AuthProvider({ children }) {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [router]);
 
   return (
     <AuthContext.Provider value={{ customer, setCustomer, token, setToken, loading }}>

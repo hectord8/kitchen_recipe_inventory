@@ -52,40 +52,24 @@ export default function AdminPage() {
   if (!isAdmin) return <p>Not authorized.</p>;
 
   return (
-    <main style={{ margin:60,  padding: 24, maxWidth: 720 }}>
+    <main className="adminMain">
       <h1>Admin</h1>
       <p>Import 200 random Spoonacular recipes into the database.</p>
 
       <button
         onClick={importRecipes}
         disabled={loading}
-        style={{
-          padding: "12px 16px",
-          borderRadius: 8,
-          border: "1px solid #ccc",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        className="adminButton"
       >
         {loading ? "Importing..." : "Import 200 recipes"}
       </button>
 
-      {error && (
-        <p style={{ marginTop: 16, color: "crimson" }}>
-          {error}
-        </p>
-      )}
+      {error && <p className="errorText">{error}</p>}
 
       {result && (
-        <div style={{ marginTop: 16 }}>
+        <div className="adminResult">
           <h3>Done ✅</h3>
-          <pre
-            style={{
-              background: "#f5f5f5",
-              padding: 12,
-              borderRadius: 8,
-              overflowX: "auto",
-            }}
-          >
+          <pre className="adminResultPre">
             {JSON.stringify(result, null, 2)}
           </pre>
         </div>

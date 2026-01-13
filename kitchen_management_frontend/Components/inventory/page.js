@@ -1,7 +1,6 @@
 "use client";
-import Image from "next/image";
 import styles from "./inventory.module.css";
-import { useEffect, useState, useContext, useMemo } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { AuthContext } from "../auth";
 
@@ -9,12 +8,13 @@ export default function Inventory() {
   const [items, setItems] = useState([]);
 
   const [error, setError] = useState("");
-  const [id, setId] = useState();
   const [item, setItem] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [itemImage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [quantity, setQuantity] = useState("");
   const { token, customer } = useContext(AuthContext);
+
 
   useEffect(() => {
     if (!customer || !token) return;
@@ -46,10 +46,10 @@ export default function Inventory() {
           },
           body: JSON.stringify({
             customerId: customer.id,
-            item: item,
-            description: description,
-            image: image,
-            quantity: quantity,
+            item,
+            description,
+            image: itemImage,
+            quantity,
           }),
         }
       );
@@ -84,10 +84,10 @@ export default function Inventory() {
     }
   }
 
-  async function increaseQuantity(item_id) {
+  async function increaseQuantity(itemId) {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${item_id}/increase`,
+        `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${itemId}/increase`,
         {
           method: "PATCH",
           headers: {
@@ -101,14 +101,14 @@ export default function Inventory() {
       const newQty = await res.json();
       setItems((prev) =>
         prev.map((it) =>
-          it.item_id === item_id ? { ...it, quantity: newQty } : it
+          it.item_id === itemId ? { ...it, quantity: newQty } : it
         )
       );
     } catch (err) {
       setError(err.message);
     }
   }
-  async function decreaseQuantity(item_id, currentQty) {
+  async function decreaseQuantity(itemId, currentQty) {
     if (currentQty === 1) {
       const confirmed = window.confirm(
         "This will remove the item from your inventory. Continue?"
@@ -118,7 +118,7 @@ export default function Inventory() {
     }
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${item_id}/decrease`,
+        `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${itemId}/decrease`,
         {
           method: "PATCH",
           headers: {
@@ -131,11 +131,11 @@ export default function Inventory() {
       const newQty = await res.json();
       setItems((prev) => {
         if (newQty === 0) {
-          return prev.filter((it) => it.item_id !== item_id);
+          return prev.filter((it) => it.item_id !== itemId);
         }
 
         return prev.map((it) =>
-          it.item_id === item_id ? { ...it, quantity: newQty } : it
+          it.item_id === itemId ? { ...it, quantity: newQty } : it
         );
       });
     } catch (err) {
@@ -146,13 +146,14 @@ async function uploadReceipt(e) {
   e.preventDefault();
   setError("");
 
-  if (!image) {
+  if (!imageFile) {
     setError("No file detected");
     return;
   }
 
   const formData = new FormData();
-  formData.append("file", image);
+  formData.append("file", imageFile);
+
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
@@ -198,15 +199,16 @@ async function uploadReceipt(e) {
 
             <button onClick={handleSubmit}>create</button>
           </form>
-          <form styles={styles.receipt}>
+          <form className={styles.receipt}>
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setImage(e.target.files[0])}
-            ></input>
-            <button onClick={uploadReceipt}>get data from receipt</button>
+              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+            />
+            <button onClick={uploadReceipt}>Get data from receipt</button>
           </form>
-          <p>{error}</p>
+          {error && <p className="errorText">{error}</p>}
+
 
           <div className={styles.items}>
             <table className={styles.table}>

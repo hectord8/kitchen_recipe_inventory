@@ -7,23 +7,40 @@ import styles from "./page.module.css"; // adjust path if needed
 
 import { AuthContext } from "../auth";
 
+const normalize = (value) => String(value ?? "").trim().toLowerCase();
+
+const parseDiets = (dietField) =>
+  String(dietField ?? "")
+    .split(",")
+    .map((diet) => normalize(diet))
+    .filter(Boolean);
+
+const MAX_PREP_TIME_DEFAULT = 999;
+const MAX_COOK_TIME_DEFAULT = 999;
+const MAX_PREP_TIME_SLIDER = 40;
+const MAX_COOK_TIME_SLIDER = 120;
+
 export default function ClientRecipes() {
-  const { customer, loading: authLoading, token } = useContext(AuthContext);
+  const { customer, token } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [Favourites, setFavourties] = useState(false);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
   const [selectedDiet, setSelectedDiet] = useState("ALL");
   const [heartedIds, setHeartedIds] = useState(new Set());
   const [heartsLoaded, setHeartsLoaded] = useState(false);
-  const [expandedRecipe, setExpandedRecipe] = useState(null);
-  const [maxCookTime, setSelectedCookTime] = useState(999);
-  const [maxPrepTime, setSelectedPrepTime] = useState(999);
+  const [expandedRecipeId, setExpandedRecipeId] = useState(null);
+  const [maxCookTime, setMaxCookTime] = useState(MAX_COOK_TIME_DEFAULT);
+  const [maxPrepTime, setMaxPrepTime] = useState(MAX_PREP_TIME_DEFAULT);
+
 
   useEffect(() => {
-    if (!customer) return;
+    if (!customer || !token) {
+      setHeartsLoaded(true);
+      return;
+    }
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
       headers: {
@@ -37,17 +54,18 @@ export default function ClientRecipes() {
         setHeartsLoaded(true);
       })
       .catch(() => setHeartsLoaded(true));
-  }, [customer]);
+  }, [customer, token]);
 
   useEffect(() => {
-    const endpoint = Favourites
+
+   
+    const endpoint = favoritesOnly
       ? `${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`
       : `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     fetch(endpoint, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -61,22 +79,14 @@ export default function ClientRecipes() {
         setError(e.message || "Failed to load recipes");
         setLoading(false);
       });
-  }, [Favourites]);
+  }, [favoritesOnly, token, customer]);
 
 
-const normalize = (s) => String(s ?? "").trim().toLowerCase();
-
-const parseDiets = (dietField) =>
-  String(dietField ?? "")
-    .split(",")
-    .map((d) => normalize(d))
-    .filter(Boolean);
-
-const Diets = useMemo(() => {
-  const set = new Set();
-  recipes.forEach((r) => parseDiets(r.diet).forEach((d) => set.add(d)));
-  return [...set].sort();
-}, [recipes]);
+  const dietOptions = useMemo(() => {
+    const set = new Set();
+    recipes.forEach((r) => parseDiets(r.diet).forEach((d) => set.add(d)));
+    return [...set].sort();
+  }, [recipes]);
 
   const filteredRecipes = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -105,7 +115,8 @@ const Diets = useMemo(() => {
   }, [recipes, selectedDiet, search, maxPrepTime, maxCookTime]);
 
   if (loading) return <p>Loading recipes...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="errorText">{error}</p>;
+
 
   async function toggleHeart(id) {
     const isHearted = heartedIds.has(id);
@@ -155,9 +166,10 @@ const Diets = useMemo(() => {
             {customer && (
               <button
                 type="button"
-                onClick={() => setFavourties((prev) => !prev)}
+                onClick={() => setFavoritesOnly((prev) => !prev)}
               >
-                {Favourites ? "Show All" : "Favourites"}
+                {favoritesOnly ? "Show All" : "Favorites"}
+
               </button>
             )}
           </div>
@@ -168,15 +180,15 @@ const Diets = useMemo(() => {
               All diets
             </button>
             <div className={styles.filterButtons}>
-              {Diets.map((Diets) => (
-                <div key={Diets}>
+              {dietOptions.map((dietOption) => (
+                <div key={dietOption}>
                   <button
-                    onClick={() => setSelectedDiet(Diets)}
+                    onClick={() => setSelectedDiet(dietOption)}
                     style={{
-                      color: selectedDiet === Diets ? "red" : "black",
+                      color: selectedDiet === dietOption ? "red" : "black",
                     }}
                   >
-                    {Diets}
+                    {dietOption}
                   </button>
                 </div>
               ))}
@@ -188,10 +200,10 @@ const Diets = useMemo(() => {
             <input
               type="range"
               min={0}
-              max={40}
+max={MAX_PREP_TIME_SLIDER}
               step={1}
               value={maxPrepTime}
-              onChange={(e) => setSelectedPrepTime(Number(e.target.value))}
+              onChange={(e) => setMaxPrepTime(Number(e.target.value))}
             ></input>
           </div>
           <div>
@@ -200,10 +212,10 @@ const Diets = useMemo(() => {
             <input
               type="range"
               min={0}
-              max={120}
+max={MAX_COOK_TIME_SLIDER}
               step={5}
               value={maxCookTime}
-              onChange={(e) => setSelectedCookTime(Number(e.target.value))}
+              onChange={(e) => setMaxCookTime(Number(e.target.value))}
             ></input>
           </div>
           {customer && (
@@ -222,7 +234,7 @@ const Diets = useMemo(() => {
             <div
               key={recipe.id}
               className={`${styles.card} ${
-                expandedRecipe === recipe.id ? styles.expanded : ""
+                expandedRecipeId === recipe.id ? styles.expanded : ""
               }`}
             >
               {customer && heartsLoaded && (
@@ -253,16 +265,16 @@ const Diets = useMemo(() => {
               <h5>Cook Time:{recipe.cookMinutes}</h5>
 
               <h5>Total Time: {recipe.readyMinutes} </h5>
-              {expandedRecipe === recipe.id && <p>{recipe.summary}</p>}
+              {expandedRecipeId === recipe.id && <p>{recipe.summary}</p>}
               <button
                 className={styles.details}
                 onClick={() =>
-                  setExpandedRecipe(
-                    expandedRecipe === recipe.id ? null : recipe.id
+                  setExpandedRecipeId(
+                    expandedRecipeId === recipe.id ? null : recipe.id
                   )
                 }
               >
-                {expandedRecipe === recipe.id ? "See less" : "See more"}
+                {expandedRecipeId === recipe.id ? "See less" : "See more"}
               </button>
 
               <p>Created by {recipe.creator}. </p>
