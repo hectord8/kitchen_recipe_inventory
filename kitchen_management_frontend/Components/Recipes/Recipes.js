@@ -9,16 +9,53 @@ import { AuthContext } from "../auth";
 
 const normalize = (value) => String(value ?? "").trim().toLowerCase();
 
+const formatDietLabel = (dietKey) =>
+  normalize(dietKey)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const parseMinutes = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+};
+
 const parseDiets = (dietField) =>
   String(dietField ?? "")
     .split(",")
     .map((diet) => normalize(diet))
     .filter(Boolean);
 
-const MAX_PREP_TIME_DEFAULT = 999;
-const MAX_COOK_TIME_DEFAULT = 999;
+
+const parseJsonArray = (value) => {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    return [];
+  }
+};
+
+const stripHtml = (value) => {
+  if (!value) return "";
+  try {
+    const doc = new DOMParser().parseFromString(value, "text/html");
+    return doc.body.textContent?.trim() || "";
+  } catch (err) {
+    return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  }
+};
+
 const MAX_PREP_TIME_SLIDER = 40;
 const MAX_COOK_TIME_SLIDER = 120;
+
+const DEFAULT_PREP_UNLIMITED = true;
+const DEFAULT_COOK_UNLIMITED = true;
+const DEFAULT_MAX_PREP_TIME = MAX_PREP_TIME_SLIDER;
+const DEFAULT_MAX_COOK_TIME = MAX_COOK_TIME_SLIDER;
 
 export default function ClientRecipes() {
   const { customer, token } = useContext(AuthContext);
@@ -28,12 +65,15 @@ export default function ClientRecipes() {
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
-  const [selectedDiet, setSelectedDiet] = useState("ALL");
+  const [selectedDiet, setSelectedDiet] = useState(""); // empty = all diets
   const [heartedIds, setHeartedIds] = useState(new Set());
   const [heartsLoaded, setHeartsLoaded] = useState(false);
   const [expandedRecipeId, setExpandedRecipeId] = useState(null);
-  const [maxCookTime, setMaxCookTime] = useState(MAX_COOK_TIME_DEFAULT);
-  const [maxPrepTime, setMaxPrepTime] = useState(MAX_PREP_TIME_DEFAULT);
+
+  const [prepUnlimited, setPrepUnlimited] = useState(DEFAULT_PREP_UNLIMITED);
+  const [cookUnlimited, setCookUnlimited] = useState(DEFAULT_COOK_UNLIMITED);
+  const [maxCookTime, setMaxCookTime] = useState(DEFAULT_MAX_COOK_TIME);
+  const [maxPrepTime, setMaxPrepTime] = useState(DEFAULT_MAX_PREP_TIME);
 
 
   useEffect(() => {
@@ -57,12 +97,18 @@ export default function ClientRecipes() {
   }, [customer, token]);
 
   useEffect(() => {
+    if (!customer || !token) {
+      setFavoritesOnly(false);
+    }
+  }, [customer, token]);
 
-   
-    const endpoint = favoritesOnly
-      ? `${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`
-      : `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
+  useEffect(() => {
+
+    const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    setLoading(true);
+    setError("");
 
     fetch(endpoint, {
       headers,
@@ -79,14 +125,63 @@ export default function ClientRecipes() {
         setError(e.message || "Failed to load recipes");
         setLoading(false);
       });
-  }, [favoritesOnly, token, customer]);
+  }, [token]);
 
 
-  const dietOptions = useMemo(() => {
-    const set = new Set();
-    recipes.forEach((r) => parseDiets(r.diet).forEach((d) => set.add(d)));
-    return [...set].sort();
-  }, [recipes]);
+
+  const dietUi = useMemo(() => {
+    const counts = new Map();
+
+    recipes.forEach((r) => {
+      const unique = new Set(parseDiets(r.diet));
+      unique.forEach((dietKey) => {
+        counts.set(dietKey, (counts.get(dietKey) ?? 0) + 1);
+      });
+    });
+
+    const pinnedDietKeys = ["vegan", "vegetarian", "gluten free", "keto"];
+    const maxDietButtons = 4;
+
+    const allByCount = [...counts.entries()]
+      .sort((a, b) => {
+        const countDiff = b[1] - a[1];
+        if (countDiff !== 0) return countDiff;
+        return a[0].localeCompare(b[0]);
+      })
+      .map(([key]) => key);
+
+    const pinnedPresent = pinnedDietKeys.filter((key) => counts.has(key));
+    const fillKeys = allByCount.filter((key) => !pinnedPresent.includes(key));
+
+    const buttonDietKeys = [...pinnedPresent];
+    for (const key of fillKeys) {
+      if (buttonDietKeys.length >= maxDietButtons) break;
+      buttonDietKeys.push(key);
+    }
+
+    const buttonOptions = buttonDietKeys.map((key) => ({
+      key,
+      label: formatDietLabel(key),
+      count: counts.get(key) ?? 0,
+    }));
+
+    const moreOptions = allByCount
+      .filter((key) => !buttonDietKeys.includes(key))
+      .map((key) => ({
+        key,
+        label: formatDietLabel(key),
+        count: counts.get(key) ?? 0,
+      }));
+
+    const selectedInButtons = buttonDietKeys.includes(selectedDiet);
+
+    return {
+      buttonOptions,
+      moreOptions,
+      selectedInButtons,
+    };
+  }, [recipes, selectedDiet]);
+
 
   const filteredRecipes = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -98,21 +193,34 @@ export default function ClientRecipes() {
         r.title?.toLowerCase().includes(q) ||
         r.description?.toLowerCase().includes(q) ||
         r.diet?.toLowerCase().includes(q);
-      
-        
+
       const recipeDiets = parseDiets(r.diet);
-      const dietOk = selectedDietNorm === "all" || recipeDiets.includes(selectedDietNorm);
-    
+      const dietOk = !selectedDietNorm || recipeDiets.includes(selectedDietNorm);
 
-      const prep = Number(r.prepMinutes ?? 0);
-      const prepOk = prep <= maxPrepTime;
+      const prep = parseMinutes(r.prepMinutes);
+      const prepOk = prepUnlimited || (prep !== null && prep <= maxPrepTime);
 
-      const cook = Number(r.cookMinutes ?? 0);
-      const cookOk = cook <= maxCookTime;
+      const cook = parseMinutes(r.cookMinutes);
+      const cookOk = cookUnlimited || (cook !== null && cook <= maxCookTime);
 
-      return searchOk && dietOk  && prepOk && cookOk;
+      const favoriteOk =
+        !favoritesOnly || (heartsLoaded && heartedIds.has(Number(r.id)));
+
+      return searchOk && dietOk && prepOk && cookOk && favoriteOk;
     });
-  }, [recipes, selectedDiet, search, maxPrepTime, maxCookTime]);
+  }, [
+    recipes,
+    selectedDiet,
+    search,
+    maxPrepTime,
+    maxCookTime,
+    prepUnlimited,
+    cookUnlimited,
+    favoritesOnly,
+    heartedIds,
+    heartsLoaded,
+  ]);
+
 
   if (loading) return <p>Loading recipes...</p>;
   if (error) return <p className="errorText">{error}</p>;
@@ -167,57 +275,101 @@ export default function ClientRecipes() {
               <button
                 type="button"
                 onClick={() => setFavoritesOnly((prev) => !prev)}
+                disabled={!heartsLoaded}
+                className={favoritesOnly ? styles.selected : ""}
               >
                 {favoritesOnly ? "Show All" : "Favorites"}
-
               </button>
+
             )}
           </div>
 
           <div>
             <h2>Diets</h2>
-            <button type="button" onClick={() => setSelectedDiet("ALL")}>
+            <button
+              type="button"
+              onClick={() => setSelectedDiet("")}
+              className={!selectedDiet ? styles.selected : ""}
+            >
               All diets
             </button>
+
             <div className={styles.filterButtons}>
-              {dietOptions.map((dietOption) => (
-                <div key={dietOption}>
-                  <button
-                    onClick={() => setSelectedDiet(dietOption)}
-                    style={{
-                      color: selectedDiet === dietOption ? "red" : "black",
-                    }}
-                  >
-                    {dietOption}
-                  </button>
-                </div>
+              {dietUi.buttonOptions.map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setSelectedDiet(key)}
+                  className={selectedDiet === key ? styles.selected : ""}
+                >
+                  {label}
+                </button>
               ))}
             </div>
+
+            <label>
+              More diets
+              <select
+                value={dietUi.selectedInButtons ? "" : selectedDiet}
+                disabled={dietUi.moreOptions.length === 0}
+                onChange={(e) => setSelectedDiet(e.target.value)}
+              >
+                <option value="">Select a diet…</option>
+                {dietUi.moreOptions.map(({ key, label, count }) => (
+                  <option key={key} value={key}>
+                    {label} ({count})
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <div>
-            <h2> Max Prep Time {maxPrepTime} </h2>
+            <h2>
+              Max Prep Time: {prepUnlimited ? "No limit" : `${maxPrepTime} min`}
+            </h2>
+            <label>
+              <input
+                type="checkbox"
+                checked={prepUnlimited}
+                onChange={(e) => setPrepUnlimited(e.target.checked)}
+              />
+              No limit
+            </label>
             <input
               type="range"
               min={0}
-max={MAX_PREP_TIME_SLIDER}
+              max={MAX_PREP_TIME_SLIDER}
               step={1}
               value={maxPrepTime}
+              disabled={prepUnlimited}
               onChange={(e) => setMaxPrepTime(Number(e.target.value))}
-            ></input>
+            />
           </div>
-          <div>
-            <h2>Max Cook Time : {maxCookTime}</h2>
 
+          <div>
+            <h2>
+              Max Cook Time: {cookUnlimited ? "No limit" : `${maxCookTime} min`}
+            </h2>
+            <label>
+              <input
+                type="checkbox"
+                checked={cookUnlimited}
+                onChange={(e) => setCookUnlimited(e.target.checked)}
+              />
+              No limit
+            </label>
             <input
               type="range"
               min={0}
-max={MAX_COOK_TIME_SLIDER}
+              max={MAX_COOK_TIME_SLIDER}
               step={5}
               value={maxCookTime}
+              disabled={cookUnlimited}
               onChange={(e) => setMaxCookTime(Number(e.target.value))}
-            ></input>
+            />
           </div>
+
           {customer && (
             <Link className={styles.publish} href="/CreateRecipe">
               Publish your own recipe
@@ -228,27 +380,26 @@ max={MAX_COOK_TIME_SLIDER}
 
       <div className={styles.body}>
         {filteredRecipes.map((recipe) => {
-          const isHearted = heartedIds.has(recipe.id);
+          const recipeId = Number(recipe.id);
+          const isHearted = heartedIds.has(recipeId);
 
           return (
             <div
-              key={recipe.id}
+              key={recipeId}
               className={`${styles.card} ${
-                expandedRecipeId === recipe.id ? styles.expanded : ""
+                expandedRecipeId === recipeId ? styles.expanded : ""
               }`}
             >
-              {customer && heartsLoaded && (
-                <button
-                  className={`${styles.heart} ${
-                    isHearted ? styles.hearted : ""
-                  }`}
-                  onClick={() => toggleHeart(recipe.id)}
-                  type="button"
-                  aria-label={isHearted ? "Unheart recipe" : "Heart recipe"}
-                />
-              )}
-
               <div className={styles.imageContainer}>
+                {customer && token && (
+                  <button
+                    className={`${styles.heart} ${isHearted ? styles.hearted : ""}`}
+                    onClick={() => toggleHeart(recipeId)}
+                    type="button"
+                    disabled={!heartsLoaded}
+                    aria-label={isHearted ? "Unheart recipe" : "Heart recipe"}
+                  />
+                )}
                 <Image
                   src={recipe.image || "/burger.jpg"}
                   sizes="100vw"
@@ -265,17 +416,50 @@ max={MAX_COOK_TIME_SLIDER}
               <h5>Cook Time:{recipe.cookMinutes}</h5>
 
               <h5>Total Time: {recipe.readyMinutes} </h5>
-              {expandedRecipeId === recipe.id && <p>{recipe.summary}</p>}
+              {expandedRecipeId === recipeId && (
+                <div>
+                  {stripHtml(recipe.summary) && <p>{stripHtml(recipe.summary)}</p>}
+                  {parseJsonArray(recipe.ingredientsJson).length > 0 && (
+                    <div>
+                      <h4>Ingredients</h4>
+                      <ul>
+                        {parseJsonArray(recipe.ingredientsJson).map((item, index) => (
+                          <li key={`${recipe.id}-ingredient-${index}`}>{stripHtml(item)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {parseJsonArray(recipe.instructionStepsJson).length > 0 ? (
+                    <div>
+                      <h4>Instructions</h4>
+                      <ol>
+                        {parseJsonArray(recipe.instructionStepsJson).map((step, index) => (
+                          <li key={`${recipe.id}-step-${index}`}>{stripHtml(step)}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  ) : (
+                    stripHtml(recipe.instructions) && (
+                      <div>
+                        <h4>Instructions</h4>
+                        <p>{stripHtml(recipe.instructions)}</p>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
               <button
+
                 className={styles.details}
                 onClick={() =>
                   setExpandedRecipeId(
-                    expandedRecipeId === recipe.id ? null : recipe.id
+                    expandedRecipeId === recipeId ? null : recipeId
                   )
                 }
               >
-                {expandedRecipeId === recipe.id ? "See less" : "See more"}
+                {expandedRecipeId === recipeId ? "See less" : "See more"}
               </button>
+
 
               <p>Created by {recipe.creator}. </p>
             </div>

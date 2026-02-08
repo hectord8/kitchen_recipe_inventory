@@ -11,6 +11,8 @@ public class Recipe {
     private String image;
     private String summary;
     private String instructions;
+    private String ingredientsJson;
+    private String instructionStepsJson;
     private Integer prepMinutes;
     private Integer cookMinutes;
     private Integer readyMinutes;
@@ -18,6 +20,7 @@ public class Recipe {
     private String diet;
     private LocalDateTime createdAt;
     private String creator;
+
 
 
     public Recipe() {}
@@ -29,6 +32,8 @@ public class Recipe {
             String image,
             String summary,
             String instructions,
+            String ingredientsJson,
+            String instructionStepsJson,
             Integer prepMinutes,
             Integer cookMinutes,
             Integer readyMinutes,
@@ -41,6 +46,8 @@ public class Recipe {
         this.image = image;
         this.summary = summary;
         this.instructions = instructions;
+        this.ingredientsJson = ingredientsJson;
+        this.instructionStepsJson = instructionStepsJson;
         this.prepMinutes = prepMinutes;
         this.cookMinutes = cookMinutes;
         this.readyMinutes = readyMinutes;
@@ -48,6 +55,7 @@ public class Recipe {
         this.diet = diet;
         this.creator = creator;
     }
+
 
     // ===== Getters & Setters =====
 
@@ -98,6 +106,23 @@ public class Recipe {
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
+
+    public String getIngredientsJson() {
+        return ingredientsJson;
+    }
+
+    public void setIngredientsJson(String ingredientsJson) {
+        this.ingredientsJson = ingredientsJson;
+    }
+
+    public String getInstructionStepsJson() {
+        return instructionStepsJson;
+    }
+
+    public void setInstructionStepsJson(String instructionStepsJson) {
+        this.instructionStepsJson = instructionStepsJson;
+    }
+
 
     public Integer getPrepMinutes() {
         return prepMinutes;

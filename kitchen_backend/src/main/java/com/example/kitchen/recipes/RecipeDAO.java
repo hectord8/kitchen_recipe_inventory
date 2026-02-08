@@ -20,6 +20,8 @@ public interface RecipeDAO {
             image,
             summary,
             instructions,
+            ingredients_json AS ingredientsJson,
+            instruction_steps_json AS instructionStepsJson,
             prep_minutes AS prepMinutes,
             cook_minutes AS cookMinutes,
             ready_minutes AS readyMinutes,
@@ -27,6 +29,7 @@ public interface RecipeDAO {
             diet,
             created_at AS createdAt,
             creator
+
         FROM recipes
         ORDER BY id DESC
     """)
@@ -47,6 +50,8 @@ public interface RecipeDAO {
             image,
             summary,
             instructions,
+            ingredients_json,
+            instruction_steps_json,
             prep_minutes,
             cook_minutes,
             ready_minutes,
@@ -60,6 +65,8 @@ public interface RecipeDAO {
             :image,
             :summary,
             :instructions,
+            :ingredientsJson,
+            :instructionStepsJson,
             :prepMinutes,
             :cookMinutes,
             :readyMinutes,
@@ -67,6 +74,7 @@ public interface RecipeDAO {
             :diet,
             :creator
         )
+
     """)
     @GetGeneratedKeys
     Recipe insert(@BindBean Recipe recipe);

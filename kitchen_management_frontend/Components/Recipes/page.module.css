@@ -84,8 +84,16 @@
   background-repeat: no-repeat;
   border: 0;
   position: absolute;
+  top: 10px;
+  right: 10px;
   z-index: 10;
 }
+
+.heart:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 .hearted {
   --c: red;
@@ -105,8 +113,11 @@
   background-repeat: no-repeat;
   border: 0;
   position: absolute;
+  top: 10px;
+  right: 10px;
   z-index: 10;
 }
+
 
 .imageContainer {
   position: relative;
@@ -153,8 +164,12 @@
   position: sticky; /* better than fixed for sidebars */
   top: 0;
 
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+
   padding-right: 6px; /* room for scrollbar */
 }
+
 
 @media only screen and (max-width: 800px) {
   .filterFixed {

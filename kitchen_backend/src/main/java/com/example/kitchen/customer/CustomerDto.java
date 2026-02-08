@@ -15,7 +15,8 @@ public class CustomerDto {
     private String firstName;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, message = "password too short must be 8 character")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+
     private String password;
 
     @NotBlank(message = "Email cannot be blank")

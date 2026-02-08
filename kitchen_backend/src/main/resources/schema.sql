@@ -8,20 +8,29 @@ CREATE TABLE IF NOT EXISTS customers
 
 CREATE TABLE IF NOT EXISTS recipes
 (
-    id             INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    spoonacular_id INT          NOT NULL UNIQUE,
-    title          VARCHAR(255) NOT NULL,
-    image          VARCHAR(512) NOT NULL,
-    summary        TEXT,
-    instructions   TEXT,
-    prep_minutes   INT,
-    cook_minutes   INT,
-    ready_minutes  INT,
-    calories       INT,
-    diet           VARCHAR(255), -- e.g. "vegan,gluten free"
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    creator        VARCHAR(255) NOT NULL
+    id                     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    spoonacular_id         INT          NOT NULL UNIQUE,
+    title                  VARCHAR(255) NOT NULL,
+    image                  VARCHAR(512) NOT NULL,
+    summary                TEXT,
+    instructions           TEXT,
+    ingredients_json       TEXT,
+    instruction_steps_json TEXT,
+    prep_minutes           INT,
+    cook_minutes           INT,
+    ready_minutes          INT,
+    calories               INT,
+    diet                   VARCHAR(255), -- e.g. "vegan,gluten free"
+    created_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    creator                VARCHAR(255) NOT NULL
 );
+
+ALTER TABLE recipes
+    ADD COLUMN IF NOT EXISTS ingredients_json TEXT;
+
+ALTER TABLE recipes
+    ADD COLUMN IF NOT EXISTS instruction_steps_json TEXT;
+
 
 
 CREATE TABLE IF NOT EXISTS customer_saved_recipes
