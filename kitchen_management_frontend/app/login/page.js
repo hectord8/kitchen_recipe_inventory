@@ -23,7 +23,7 @@ export default function Login() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email: email.toLowerCase(), password })
       });
 
       if (!res.ok) {
@@ -58,6 +58,10 @@ export default function Login() {
           </p>
         )}
 
+        <p className={styles.hint}>
+          Demo: Email <strong>Test@test.com</strong> &mdash; Password <strong>12345678</strong>
+        </p>
+
         <form className={styles.form} onSubmit={login}>
           <input
             placeholder="Email"
@@ -68,7 +72,6 @@ export default function Login() {
             inputMode="email"
             required
           />
-
           <input
             placeholder="Password"
             type="password"

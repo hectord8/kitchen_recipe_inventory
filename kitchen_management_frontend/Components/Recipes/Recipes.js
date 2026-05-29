@@ -29,34 +29,6 @@ const parseDiets = (dietField) =>
     .filter(Boolean);
 
 
-const parseJsonArray = (value) => {
-  if (!value) return [];
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (err) {
-    return [];
-  }
-};
-
-const stripHtml = (value) => {
-  if (!value) return "";
-  try {
-    const doc = new DOMParser().parseFromString(value, "text/html");
-    return doc.body.textContent?.trim() || "";
-  } catch (err) {
-    return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  }
-};
-
-const MAX_PREP_TIME_SLIDER = 40;
-const MAX_COOK_TIME_SLIDER = 120;
-
-const DEFAULT_PREP_UNLIMITED = true;
-const DEFAULT_COOK_UNLIMITED = true;
-const DEFAULT_MAX_PREP_TIME = MAX_PREP_TIME_SLIDER;
-const DEFAULT_MAX_COOK_TIME = MAX_COOK_TIME_SLIDER;
-
 export default function ClientRecipes() {
   const { customer, token } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
@@ -69,11 +41,6 @@ export default function ClientRecipes() {
   const [heartedIds, setHeartedIds] = useState(new Set());
   const [heartsLoaded, setHeartsLoaded] = useState(false);
   const [expandedRecipeId, setExpandedRecipeId] = useState(null);
-
-  const [prepUnlimited, setPrepUnlimited] = useState(DEFAULT_PREP_UNLIMITED);
-  const [cookUnlimited, setCookUnlimited] = useState(DEFAULT_COOK_UNLIMITED);
-  const [maxCookTime, setMaxCookTime] = useState(DEFAULT_MAX_COOK_TIME);
-  const [maxPrepTime, setMaxPrepTime] = useState(DEFAULT_MAX_PREP_TIME);
 
 
   useEffect(() => {
@@ -197,30 +164,19 @@ export default function ClientRecipes() {
       const recipeDiets = parseDiets(r.diet);
       const dietOk = !selectedDietNorm || recipeDiets.includes(selectedDietNorm);
 
-      const prep = parseMinutes(r.prepMinutes);
-      const prepOk = prepUnlimited || (prep !== null && prep <= maxPrepTime);
-
-      const cook = parseMinutes(r.cookMinutes);
-      const cookOk = cookUnlimited || (cook !== null && cook <= maxCookTime);
-
       const favoriteOk =
         !favoritesOnly || (heartsLoaded && heartedIds.has(Number(r.id)));
 
-      return searchOk && dietOk && prepOk && cookOk && favoriteOk;
+      return searchOk && dietOk && favoriteOk;
     });
   }, [
     recipes,
     selectedDiet,
     search,
-    maxPrepTime,
-    maxCookTime,
-    prepUnlimited,
-    cookUnlimited,
     favoritesOnly,
     heartedIds,
     heartsLoaded,
   ]);
-
 
   if (loading) return <p>Loading recipes...</p>;
   if (error) return <p className="errorText">{error}</p>;
@@ -261,6 +217,9 @@ export default function ClientRecipes() {
 
   return (
     <div className={styles.main}>
+      {expandedRecipeId !== null && (
+        <div className={styles.backdrop} onClick={() => setExpandedRecipeId(null)} />
+      )}
       <div className={styles.filter}>
         <div className={styles.filterFixed}>
           <h1>Filters</h1>
@@ -324,51 +283,6 @@ export default function ClientRecipes() {
             </label>
           </div>
 
-          <div>
-            <h2>
-              Max Prep Time: {prepUnlimited ? "No limit" : `${maxPrepTime} min`}
-            </h2>
-            <label>
-              <input
-                type="checkbox"
-                checked={prepUnlimited}
-                onChange={(e) => setPrepUnlimited(e.target.checked)}
-              />
-              No limit
-            </label>
-            <input
-              type="range"
-              min={0}
-              max={MAX_PREP_TIME_SLIDER}
-              step={1}
-              value={maxPrepTime}
-              disabled={prepUnlimited}
-              onChange={(e) => setMaxPrepTime(Number(e.target.value))}
-            />
-          </div>
-
-          <div>
-            <h2>
-              Max Cook Time: {cookUnlimited ? "No limit" : `${maxCookTime} min`}
-            </h2>
-            <label>
-              <input
-                type="checkbox"
-                checked={cookUnlimited}
-                onChange={(e) => setCookUnlimited(e.target.checked)}
-              />
-              No limit
-            </label>
-            <input
-              type="range"
-              min={0}
-              max={MAX_COOK_TIME_SLIDER}
-              step={5}
-              value={maxCookTime}
-              disabled={cookUnlimited}
-              onChange={(e) => setMaxCookTime(Number(e.target.value))}
-            />
-          </div>
 
           {customer && (
             <Link className={styles.publish} href="/CreateRecipe">
@@ -417,36 +331,10 @@ export default function ClientRecipes() {
 
               <h5>Total Time: {recipe.readyMinutes} </h5>
               {expandedRecipeId === recipeId && (
-                <div>
-                  {stripHtml(recipe.summary) && <p>{stripHtml(recipe.summary)}</p>}
-                  {parseJsonArray(recipe.ingredientsJson).length > 0 && (
-                    <div>
-                      <h4>Ingredients</h4>
-                      <ul>
-                        {parseJsonArray(recipe.ingredientsJson).map((item, index) => (
-                          <li key={`${recipe.id}-ingredient-${index}`}>{stripHtml(item)}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {parseJsonArray(recipe.instructionStepsJson).length > 0 ? (
-                    <div>
-                      <h4>Instructions</h4>
-                      <ol>
-                        {parseJsonArray(recipe.instructionStepsJson).map((step, index) => (
-                          <li key={`${recipe.id}-step-${index}`}>{stripHtml(step)}</li>
-                        ))}
-                      </ol>
-                    </div>
-                  ) : (
-                    stripHtml(recipe.instructions) && (
-                      <div>
-                        <h4>Instructions</h4>
-                        <p>{stripHtml(recipe.instructions)}</p>
-                      </div>
-                    )
-                  )}
-                </div>
+                <>
+                  <button className={styles.closeBtn} onClick={() => setExpandedRecipeId(null)}>×</button>
+                  <div className={styles.summary} dangerouslySetInnerHTML={{ __html: recipe.summary }} />
+                </>
               )}
               <button
 

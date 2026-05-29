@@ -41,7 +41,7 @@ public class CustomerController {
     public ResponseEntity<Customer> insert(@Valid @RequestBody CustomerDto dto) {
         Customer customer = new Customer();
         customer.setFirstName(dto.getFirstName());
-        customer.setEmail(dto.getEmail());
+        customer.setEmail(dto.getEmail().toLowerCase());
         customer.setPassword(passwordEncoder.encode(dto.getPassword()));
         Customer saved = CustomerDao.insert(customer);
 

@@ -28,11 +28,6 @@ export default function Nav() {
           />
         </div>
       </Link>
-      {!loading && customer && (
-        <Link href="/inventory" className={styles.link}>
-          Inventory
-        </Link>
-      )}
       {!loading && customer && customer.firstName === "hector" && (
         <Link className={styles.link} href="/admin">
           Admin

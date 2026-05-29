@@ -75,14 +75,17 @@ export default function CreateRecipe() {
         <form className={styles.form} onSubmit={handleSubmit}>
           <h2>Create Recipe</h2>
 
-          <input
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-
           <label className={styles.label}>
+            Title
+            <input
+              placeholder="e.g. Classic Margherita Pizza"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </label>
+
+          <label className={styles.fileLabel}>
             Recipe image
             <input
               type="file"
@@ -91,43 +94,53 @@ export default function CreateRecipe() {
             />
           </label>
 
-          <label className={styles.label}>
-            Category <br></br>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="MAIN">Main</option>
-              <option value="SNACK">Snack</option>
-              <option value="DESSERT">Dessert</option>
-              <option value="BREAKFAST">Breakfast</option>
-              <option value="DRINK">Drink</option>
-            </select>
-          </label>
+          <div className={styles.row}>
+            <label className={styles.label}>
+              Category
+              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                <option value="MAIN">Main</option>
+                <option value="SNACK">Snack</option>
+                <option value="DESSERT">Dessert</option>
+                <option value="BREAKFAST">Breakfast</option>
+                <option value="DRINK">Drink</option>
+              </select>
+            </label>
 
-          <label className={styles.label}>
-            Diet <br></br>
-            <select value={diet} onChange={(e) => setDiet(e.target.value)}>
-              <option value="NONE">None</option>
-              <option value="Vegetarian">Vegetarian</option>
-              <option value="Vegan">Vegan</option>
-              <option value="GLUTEN_FREE">Gluten-free</option>
-              <option value="DAIRY_FREE">Dairy-free</option>
-            </select>
-          </label>
+            <label className={styles.label}>
+              Diet
+              <select value={diet} onChange={(e) => setDiet(e.target.value)}>
+                <option value="NONE">None</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="GLUTEN_FREE">Gluten-free</option>
+                <option value="DAIRY_FREE">Dairy-free</option>
+              </select>
+            </label>
+          </div>
 
-          <input
-            type="number"
-            min="0"
-            placeholder="Prep time (mins)"
-            value={prepTime}
-            onChange={(e) => setPrepTime(e.target.value)}
-          />
+          <div className={styles.row}>
+            <label className={styles.label}>
+              Prep time (mins)
+              <input
+                type="number"
+                min="0"
+                placeholder="e.g. 15"
+                value={prepTime}
+                onChange={(e) => setPrepTime(e.target.value)}
+              />
+            </label>
 
-          <input
-            type="number"
-            min="0"
-            placeholder="Cook time (mins)"
-            value={cookTime}
-            onChange={(e) => setCookTime(e.target.value)}
-          />
+            <label className={styles.label}>
+              Cook time (mins)
+              <input
+                type="number"
+                min="0"
+                placeholder="e.g. 30"
+                value={cookTime}
+                onChange={(e) => setCookTime(e.target.value)}
+              />
+            </label>
+          </div>
 
           <textarea
             placeholder="Description"
@@ -138,11 +151,11 @@ export default function CreateRecipe() {
 
    
 
-          {error && <p className="errorText">{error}</p>}
+          {error && <p className={styles.errorText}>{error}</p>}
 
 
           <button type="submit" disabled={loading}>
-            {loading ? "Uploading..." : "Upload"}
+            {loading ? "Creating..." : "Create Recipe"}
           </button>
         </form>
       </main>

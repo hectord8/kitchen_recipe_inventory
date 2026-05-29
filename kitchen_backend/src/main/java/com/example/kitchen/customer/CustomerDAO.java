@@ -38,7 +38,7 @@ public class CustomerDAO {
     public Customer getCustomerByLogin(String email ) {
 
         return jdbc.queryForObject(
-                "SELECT id, firstname, PASSWORD, email FROM customers WHERE email= ? ",
+                "SELECT id, firstname, PASSWORD, email FROM customers WHERE LOWER(email) = LOWER(?)",
                 (rs, rowNum) -> new Customer(
                         rs.getInt("id"),
                         rs.getString("firstname"),
