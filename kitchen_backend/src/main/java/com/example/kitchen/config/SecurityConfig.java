@@ -51,20 +51,15 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         System.out.println("Allowed orgins: " + allowedOrigins);
 
-        // IMPORTANT: cannot use "*" when allowCredentials = true
-        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedOriginPatterns(allowedOrigins);
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Requested-With", "Accept"));
         config.setAllowCredentials(true);
-
-        // Optional: expose headers if you need them on frontend
-        // config.setExposedHeaders(List.of("Set-Cookie"));
-
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }}
+    }
 
