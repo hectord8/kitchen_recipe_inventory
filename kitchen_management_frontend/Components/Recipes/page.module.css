@@ -204,9 +204,9 @@
 
 .filter {
   display: flex;
-  flex: 0 0 min(320px, 100%);
-  width: min(320px, 100%);
-  padding: 16px 14px;
+  flex: 0 0 min(280px, 100%);
+  width: min(280px, 100%);
+  padding: 20px 16px;
   background: #e7e08b;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -215,13 +215,32 @@
 
 
 .filterFixed {
-  position: sticky; /* better than fixed for sidebars */
+  position: sticky;
   top: 0;
 
-  max-height: calc(100vh - 32px);
+  max-height: calc(100vh - 40px);
   overflow-y: auto;
 
-  padding-right: 6px; /* room for scrollbar */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  padding-right: 6px;
+}
+
+
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filterSection:not(:last-of-type)::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
 }
 
 
@@ -253,22 +272,74 @@
 }
 
 .filter h1 {
-  margin: 0 0 10px 0;
+  margin: 0;
   font-size: 22px;
 }
 
 .filter h2 {
-  margin: 16px 0 8px 0;
+  margin: 0;
   font-size: 16px;
   opacity: 0.9;
+}
+
+.filter h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
 }
 
 .filterButtons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0 18px 0;
+  gap: 6px;
   max-width: 100%;
+}
+
+.filter input[type="text"] {
+  height: 40px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filter input[type="text"]:focus-visible {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.filter select {
+  height: 36px;
+  width: 100%;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.filter select:focus-visible {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.filter label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.85;
 }
 
 .filter button {
@@ -310,10 +381,18 @@
 }
 
 .publish {
-  font-size: 18px;
+  font-size: 16px;
   text-decoration: none;
   color: black;
-  border: 1px solid black;
-  padding: 2px;
-  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: auto;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.publish:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.5);
 }

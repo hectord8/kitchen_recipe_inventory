@@ -223,14 +223,19 @@ export default function ClientRecipes() {
       <div className={styles.filter}>
         <div className={styles.filterFixed}>
           <h1>Filters</h1>
-          <h4>Search</h4>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search recipes..."
-          />
-          <div>
-            {customer && (
+
+          <div className={styles.filterSection}>
+            <h4>Search</h4>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search recipes..."
+            />
+          </div>
+
+          {customer && (
+            <div className={styles.filterSection}>
               <button
                 type="button"
                 onClick={() => setFavoritesOnly((prev) => !prev)}
@@ -239,11 +244,10 @@ export default function ClientRecipes() {
               >
                 {favoritesOnly ? "Show All" : "Favorites"}
               </button>
+            </div>
+          )}
 
-            )}
-          </div>
-
-          <div>
+          <div className={styles.filterSection}>
             <h2>Diets</h2>
             <button
               type="button"
@@ -282,7 +286,6 @@ export default function ClientRecipes() {
               </select>
             </label>
           </div>
-
 
           {customer && (
             <Link className={styles.publish} href="/CreateRecipe">
