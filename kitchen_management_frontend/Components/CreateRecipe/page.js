@@ -39,7 +39,7 @@ export default function CreateRecipe() {
       let imageUrl = "";
 
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/recipes`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({

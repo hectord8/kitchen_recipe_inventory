@@ -38,7 +38,7 @@ public class RecipeController {
 //        return recipeDao.getAllDiets();
 //    }
 
-    @PostMapping("/recipes")
+    @PostMapping
     public ResponseEntity<Recipe> insert(@RequestBody Recipe recipe) {
         Recipe saved = recipeDao.insert(recipe);
 
