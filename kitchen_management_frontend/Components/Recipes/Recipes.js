@@ -318,7 +318,7 @@ export default function ClientRecipes() {
                   />
                 )}
                 <Image
-                  src={recipe.image || "/burger.jpg"}
+                  src={recipe.image?.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${recipe.image}` : (recipe.image || "/burger.jpg")}
                   sizes="100vw"
                   fill
                   alt={recipe.title || "Recipe image"}

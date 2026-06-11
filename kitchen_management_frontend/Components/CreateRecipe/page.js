@@ -17,9 +17,11 @@ export default function CreateRecipe() {
   const [description, setDescription] = useState("");
 
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const creator = customer?.firstName ?? "";
 
   function clearError(field) {
@@ -69,6 +71,29 @@ export default function CreateRecipe() {
       const prep = Number(prepTime);
       const cook = Number(cookTime);
       let imageUrl = "";
+
+      if (imageFile) {
+        setUploading(true);
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const text = await uploadRes.text();
+          let detail;
+          try { detail = JSON.parse(text); } catch { detail = text; }
+          throw new Error(detail?.error || detail || "Image upload failed");
+        }
+
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.url;
+        setUploading(false);
+      }
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
         method: "POST",
@@ -132,8 +157,24 @@ export default function CreateRecipe() {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setImageFile(file);
+                clearError("image");
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = () => setImagePreview(reader.result);
+                  reader.readAsDataURL(file);
+                } else {
+                  setImagePreview(null);
+                }
+              }}
+              className={fieldErrors.image ? styles.inputError : ""}
             />
+            {imagePreview && (
+              <img src={imagePreview} alt="Preview" className={styles.preview} />
+            )}
+            {fieldErrors.image && <span className={styles.fieldError}>{fieldErrors.image}</span>}
           </label>
 
           <div className={styles.row}>
@@ -208,7 +249,7 @@ export default function CreateRecipe() {
           {fieldErrors._general && <p className={styles.errorText}>{fieldErrors._general}</p>}
 
           <button type="submit" disabled={submitLoading}>
-            {submitLoading ? "Creating..." : "Create Recipe"}
+            {uploading ? "Uploading image..." : submitLoading ? "Creating..." : "Create Recipe"}
           </button>
         </form>
       </main>

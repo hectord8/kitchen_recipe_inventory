@@ -8,6 +8,11 @@ const nextConfig = {
         hostname: "img.spoonacular.com",
         pathname: "/recipes/**",
       },
+      {
+        protocol: "https",
+        hostname: "api.hexhax.store",
+        pathname: "/uploads/**",
+      },
     ],
   },
 };
