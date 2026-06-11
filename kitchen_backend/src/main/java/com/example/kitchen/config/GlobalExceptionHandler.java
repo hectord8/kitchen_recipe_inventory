@@ -41,7 +41,8 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
 
         Map<String, Object> body = new HashMap<>();
-        body.put("message", "Something went wrong. Please try again later.");
+        body.put("message", "Something went wrong.");
+        body.put("error", ex.getClass().getSimpleName() + ": " + ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }

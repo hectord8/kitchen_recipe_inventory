@@ -39,6 +39,12 @@ ALTER TABLE recipes
 ALTER TABLE recipes
     ADD COLUMN IF NOT EXISTS description TEXT;
 
+ALTER TABLE recipes
+    ALTER COLUMN spoonacular_id DROP NOT NULL;
+
+ALTER TABLE recipes
+    DROP CONSTRAINT IF EXISTS recipes_spoonacular_id_key;
+
 
 
 CREATE TABLE IF NOT EXISTS customer_saved_recipes
