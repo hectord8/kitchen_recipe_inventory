@@ -27,6 +27,8 @@ public interface RecipeDAO {
             ready_minutes AS readyMinutes,
             calories,
             diet,
+            category,
+            description,
             created_at AS createdAt,
             creator
 
@@ -57,6 +59,8 @@ public interface RecipeDAO {
             ready_minutes,
             calories,
             diet,
+            category,
+            description,
             creator
         )
         VALUES (
@@ -72,6 +76,8 @@ public interface RecipeDAO {
             :readyMinutes,
             :calories,
             :diet,
+            :category,
+            :description,
             :creator
         )
 

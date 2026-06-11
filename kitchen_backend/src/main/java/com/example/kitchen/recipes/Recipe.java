@@ -18,6 +18,8 @@ public class Recipe {
     private Integer readyMinutes;
     private Integer calories;
     private String diet;
+    private String category;
+    private String description;
     private LocalDateTime createdAt;
     private String creator;
 
@@ -162,6 +164,22 @@ public class Recipe {
 
     public void setDiet(String diet) {
         this.diet = diet;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getCreatedAt() {

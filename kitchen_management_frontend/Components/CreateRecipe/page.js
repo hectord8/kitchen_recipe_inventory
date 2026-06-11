@@ -18,9 +18,32 @@ export default function CreateRecipe() {
 
   const [imageFile, setImageFile] = useState(null);
 
-  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [submitLoading, setSubmitLoading] = useState(false);
   const creator = customer?.firstName ?? "";
+
+  function clearError(field) {
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function validate() {
+    const errors = {};
+    if (!title.trim()) errors.title = "Title is required";
+    if (!category) errors.category = "Category is required";
+    const prep = Number(prepTime);
+    if (prepTime !== "" && (Number.isNaN(prep) || prep < 0))
+      errors.prepTime = "Must be 0 or more";
+    const cook = Number(cookTime);
+    if (cookTime !== "" && (Number.isNaN(cook) || cook < 0))
+      errors.cookTime = "Must be 0 or more";
+    if (description.length > 1000)
+      errors.description = "Must be 1000 characters or less";
+    return errors;
+  }
 
   useEffect(() => {
     if (!authLoading && !customer) {
@@ -31,42 +54,57 @@ export default function CreateRecipe() {
   if (authLoading || !customer) return null;
 
   async function handleSubmit(e) {
-
     e.preventDefault();
-    setError("");
+    setFieldErrors({});
+
+    const clientErrors = validate();
+    if (Object.keys(clientErrors).length > 0) {
+      setFieldErrors(clientErrors);
+      return;
+    }
+
     setSubmitLoading(true);
 
     try {
-      // simple validation
       const prep = Number(prepTime);
       const cook = Number(cookTime);
-      if (Number.isNaN(prep) || prep < 0) throw new Error("Prep time must be a number ≥ 0");
-      if (Number.isNaN(cook) || cook < 0) throw new Error("Cook time must be a number ≥ 0");
-      if (!title.trim()) throw new Error("Title is required");
-
       let imageUrl = "";
-
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           title: title.trim(),
-          image: imageUrl,      
+          image: imageUrl,
           category,
           diet,
-          prepTime: prep,
-          cookTime: cook,
+          prepTime: Number.isFinite(prep) ? prep : null,
+          cookTime: Number.isFinite(cook) ? cook : null,
           description: description.trim(),
           creator,
         }),
       });
 
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const text = await res.text();
+        let detail;
+        try {
+          detail = JSON.parse(text);
+        } catch {
+          throw new Error(text || "Failed to create recipe");
+        }
+
+        if (detail.errors) {
+          setFieldErrors(detail.errors);
+        } else {
+          throw new Error(detail.message || "Failed to create recipe");
+        }
+        return;
+      }
 
       router.push("/");
     } catch (err) {
-      setError(err.message || "Failed to create recipe");
+      setFieldErrors({ _general: err.message || "Failed to create recipe" });
     } finally {
       setSubmitLoading(false);
     }
@@ -83,9 +121,10 @@ export default function CreateRecipe() {
             <input
               placeholder="e.g. Classic Margherita Pizza"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+              onChange={(e) => { setTitle(e.target.value); clearError("title"); }}
+              className={fieldErrors.title ? styles.inputError : ""}
             />
+            {fieldErrors.title && <span className={styles.fieldError}>{fieldErrors.title}</span>}
           </label>
 
           <label className={styles.fileLabel}>
@@ -100,13 +139,18 @@ export default function CreateRecipe() {
           <div className={styles.row}>
             <label className={styles.label}>
               Category
-              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <select
+                value={category}
+                onChange={(e) => { setCategory(e.target.value); clearError("category"); }}
+                className={fieldErrors.category ? styles.inputError : ""}
+              >
                 <option value="MAIN">Main</option>
                 <option value="SNACK">Snack</option>
                 <option value="DESSERT">Dessert</option>
                 <option value="BREAKFAST">Breakfast</option>
                 <option value="DRINK">Drink</option>
               </select>
+              {fieldErrors.category && <span className={styles.fieldError}>{fieldErrors.category}</span>}
             </label>
 
             <label className={styles.label}>
@@ -129,8 +173,10 @@ export default function CreateRecipe() {
                 min="0"
                 placeholder="e.g. 15"
                 value={prepTime}
-                onChange={(e) => setPrepTime(e.target.value)}
+                onChange={(e) => { setPrepTime(e.target.value); clearError("prepTime"); }}
+                className={fieldErrors.prepTime ? styles.inputError : ""}
               />
+              {fieldErrors.prepTime && <span className={styles.fieldError}>{fieldErrors.prepTime}</span>}
             </label>
 
             <label className={styles.label}>
@@ -140,22 +186,26 @@ export default function CreateRecipe() {
                 min="0"
                 placeholder="e.g. 30"
                 value={cookTime}
-                onChange={(e) => setCookTime(e.target.value)}
+                onChange={(e) => { setCookTime(e.target.value); clearError("cookTime"); }}
+                className={fieldErrors.cookTime ? styles.inputError : ""}
               />
+              {fieldErrors.cookTime && <span className={styles.fieldError}>{fieldErrors.cookTime}</span>}
             </label>
           </div>
 
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={5}
-          />
+          <label className={styles.label}>
+            Description
+            <textarea
+              placeholder="Description"
+              value={description}
+              onChange={(e) => { setDescription(e.target.value); clearError("description"); }}
+              rows={5}
+              className={fieldErrors.description ? styles.inputError : ""}
+            />
+            {fieldErrors.description && <span className={styles.fieldError}>{fieldErrors.description}</span>}
+          </label>
 
-   
-
-          {error && <p className={styles.errorText}>{error}</p>}
-
+          {fieldErrors._general && <p className={styles.errorText}>{fieldErrors._general}</p>}
 
           <button type="submit" disabled={submitLoading}>
             {submitLoading ? "Creating..." : "Create Recipe"}

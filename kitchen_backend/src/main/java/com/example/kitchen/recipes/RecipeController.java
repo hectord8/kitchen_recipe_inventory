@@ -1,6 +1,7 @@
 package com.example.kitchen.recipes;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,17 @@ public class RecipeController {
 //    }
 
     @PostMapping
-    public ResponseEntity<Recipe> insert(@RequestBody Recipe recipe) {
+    public ResponseEntity<?> insert(@Valid @RequestBody RecipeDto dto) {
+        Recipe recipe = new Recipe();
+        recipe.setTitle(dto.getTitle());
+        recipe.setImage(dto.getImage() != null ? dto.getImage() : "");
+        recipe.setCategory(dto.getCategory());
+        recipe.setDiet(dto.getDiet());
+        recipe.setPrepMinutes(dto.getPrepTime());
+        recipe.setCookMinutes(dto.getCookTime());
+        recipe.setDescription(dto.getDescription());
+        recipe.setCreator(dto.getCreator());
+
         Recipe saved = recipeDao.insert(recipe);
 
         return ResponseEntity.ok(saved);

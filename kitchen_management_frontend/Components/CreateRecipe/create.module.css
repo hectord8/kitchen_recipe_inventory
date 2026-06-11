@@ -126,6 +126,20 @@
   margin: 0;
 }
 
+.fieldError {
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.inputError {
+  border-color: #b91c1c !important;
+}
+
+.inputError:focus-visible {
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15) !important;
+}
+
 @media only screen and (max-width: 600px) {
   .main {
     padding: 20px 16px;
