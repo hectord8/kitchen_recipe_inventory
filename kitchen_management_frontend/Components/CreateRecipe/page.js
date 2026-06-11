@@ -1,12 +1,12 @@
 "use client";
 
 import styles from "./create.module.css";
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../auth";
 
 export default function CreateRecipe() {
-  const { customer, token } = useContext(AuthContext);
+  const { customer, token, loading: authLoading } = useContext(AuthContext);
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -19,14 +19,22 @@ export default function CreateRecipe() {
   const [imageFile, setImageFile] = useState(null);
 
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const creator = customer?.firstName ?? "";
+
+  useEffect(() => {
+    if (!authLoading && !customer) {
+      router.replace("/");
+    }
+  }, [authLoading, customer, router]);
+
+  if (authLoading || !customer) return null;
 
   async function handleSubmit(e) {
 
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitLoading(true);
 
     try {
       // simple validation
@@ -60,7 +68,7 @@ export default function CreateRecipe() {
     } catch (err) {
       setError(err.message || "Failed to create recipe");
     } finally {
-      setLoading(false);
+      setSubmitLoading(false);
     }
   }
 
@@ -149,8 +157,8 @@ export default function CreateRecipe() {
           {error && <p className={styles.errorText}>{error}</p>}
 
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Create Recipe"}
+          <button type="submit" disabled={submitLoading}>
+            {submitLoading ? "Creating..." : "Create Recipe"}
           </button>
         </form>
       </main>
