@@ -41,13 +41,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(eh -> eh
-                        .authenticationEntryPoint((req, res, authException) ->
-                                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication required"))
-                        .accessDeniedHandler((req, res, accessDeniedException) ->
-                                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied"))
-                );
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
         return http.build();
