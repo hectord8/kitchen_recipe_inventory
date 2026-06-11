@@ -37,11 +37,6 @@ export default function CreateRecipe() {
       if (!title.trim()) throw new Error("Title is required");
 
       let imageUrl = "";
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
-      }
-      
-
 
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/recipes`, {
