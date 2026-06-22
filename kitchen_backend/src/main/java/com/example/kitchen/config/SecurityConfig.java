@@ -56,9 +56,15 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    log.info("Allowed origins: {}", allowedOrigins);
 
-    config.setAllowedOriginPatterns(allowedOrigins);
+    boolean hasPattern = allowedOrigins.stream().anyMatch(o -> o.contains("*"));
+    if (hasPattern) {
+      config.setAllowedOriginPatterns(allowedOrigins);
+      log.info("CORS allowed origin patterns: {}", allowedOrigins);
+    } else {
+      config.setAllowedOrigins(allowedOrigins);
+      log.info("CORS allowed origins: {}", allowedOrigins);
+    }
 
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     config.setAllowedHeaders(
