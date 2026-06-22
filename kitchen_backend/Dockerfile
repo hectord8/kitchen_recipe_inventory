@@ -1,23 +1,19 @@
-# ---- build stage ----
-FROM eclipse-temurin:21-jdk AS build
+FROM gradle:jdk-21 AS builder
 WORKDIR /app
+COPY build.gradle settings.gradle ./
+COPY gradle gradle
+COPY gradlew gradlew.bat ./
+RUN ./gradlew --no-daemon dependencies > /dev/null 2>&1 || true
+COPY src src
+RUN ./gradlew --no-daemon bootJar
 
-COPY . .
-
-# make wrapper executable (important on Linux/Render)
-RUN chmod +x ./gradlew
-
-# build jar
-RUN ./gradlew clean build -x test
-
-# ---- run stage ----
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-COPY --from=build /app/build/libs/*.jar app.jar
-
-# Render provides $PORT
-ENV PORT=8080
+RUN addgroup -S app && adduser -S app -G app
+COPY --from=builder /app/build/libs/*.jar app.jar
+USER app
 EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENV SPRING_PROFILES_ACTIVE=production
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD wget -qO- http://localhost:8080/health || exit 1
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -36,6 +36,16 @@ function sanitizeHtml(str) {
   return str.replace(/<[^>]*>/g, "");
 }
 
+function safeJsonParse(str) {
+  if (!str) return null;
+  try {
+    const parsed = JSON.parse(str);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function ClientRecipes() {
   const { customer } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
@@ -254,21 +264,22 @@ export default function ClientRecipes() {
               ))}
             </div>
 
-            <label>
-              More diets
-              <select
-                value={dietUi.selectedInButtons ? "" : selectedDiet}
-                disabled={dietUi.moreOptions.length === 0}
-                onChange={(e) => setSelectedDiet(e.target.value)}
-              >
-                <option value="">Select a diet…</option>
-                {dietUi.moreOptions.map(({ key, label, count }) => (
-                  <option key={key} value={key}>
-                    {label} ({count})
-                  </option>
-                ))}
-              </select>
-            </label>
+            {dietUi.moreOptions.length > 0 && (
+              <label>
+                More diets
+                <select
+                  value={dietUi.selectedInButtons ? "" : selectedDiet}
+                  onChange={(e) => setSelectedDiet(e.target.value)}
+                >
+                  <option value="">Select a diet…</option>
+                  {dietUi.moreOptions.map(({ key, label, count }) => (
+                    <option key={key} value={key}>
+                      {label} ({count})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
           </div>
 
           {customer && (
@@ -313,20 +324,63 @@ export default function ClientRecipes() {
 
               <h2>{recipe.title}</h2>
 
-              <h4>{recipe.diet}</h4>
+              <div className={styles.meta}>
+                {recipe.category && (
+                  <span className={styles.tag}>{recipe.category}</span>
+                )}
+                {recipe.diet && parseDiets(recipe.diet).map((d) => (
+                  <span key={d} className={styles.tag}>{formatDietLabel(d)}</span>
+                ))}
+                {recipe.calories && (
+                  <span className={styles.tag}>{recipe.calories} cal</span>
+                )}
+              </div>
 
-              <h5>Prep Time:{recipe.prepMinutes}</h5>
-              <h5>Cook Time:{recipe.cookMinutes}</h5>
-
-              <h5>Total Time: {recipe.readyMinutes} </h5>
+              {recipe.prepMinutes != null && (
+                <h5>Prep Time: {recipe.prepMinutes}m</h5>
+              )}
+              {recipe.cookMinutes != null && (
+                <h5>Cook Time: {recipe.cookMinutes}m</h5>
+              )}
+              {recipe.readyMinutes != null && (
+                <h5>Total Time: {recipe.readyMinutes}m</h5>
+              )}
               {expandedRecipeId === recipeId && (
                 <>
                   <button className={styles.closeBtn} onClick={() => setExpandedRecipeId(null)}>
                     ×
                   </button>
-                  <div className={styles.summary}>
-                    {sanitizeHtml(recipe.summary)}
-                  </div>
+
+                  {(recipe.description || recipe.summary) && (
+                    <div className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Description</h4>
+                      <p className={styles.summary}>
+                        {recipe.description || sanitizeHtml(recipe.summary)}
+                      </p>
+                    </div>
+                  )}
+
+                  {safeJsonParse(recipe.ingredientsJson) && (
+                    <div className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Ingredients</h4>
+                      <ul className={styles.list}>
+                        {safeJsonParse(recipe.ingredientsJson).map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {safeJsonParse(recipe.instructionStepsJson) && (
+                    <div className={styles.section}>
+                      <h4 className={styles.sectionTitle}>Instructions</h4>
+                      <ol className={styles.list}>
+                        {safeJsonParse(recipe.instructionStepsJson).map((step, i) => (
+                          <li key={i}>{step}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
                 </>
               )}
               <button

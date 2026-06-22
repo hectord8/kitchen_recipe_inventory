@@ -1,7 +1,9 @@
 "use client";
 
 import styles from "./page.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const API = `${process.env.NEXT_PUBLIC_API_URL}/Customers/register`;
 
@@ -15,13 +17,21 @@ const formatFieldLabel = (field) =>
   fieldLabels[field] || `${field.charAt(0).toUpperCase()}${field.slice(1)}`;
 
 export default function CreateAccount() {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [success, setSuccess] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!success) return;
+    const timer = setTimeout(() => router.push("/login"), 3000);
+    return () => clearTimeout(timer);
+  }, [success, router]);
 
   async function addCustomer(e) {
     e.preventDefault();
@@ -47,6 +57,7 @@ export default function CreateAccount() {
         return;
       }
 
+      setSuccess(true);
       setFirstName("");
       setPassword("");
       setEmail("");
@@ -55,6 +66,23 @@ export default function CreateAccount() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (success) {
+    return (
+      <div className={styles.page}>
+        <main className={styles.main}>
+          <div className={styles.successBox} role="status">
+            <h2>Account created!</h2>
+            <p>You can now log in with your new account.</p>
+            <p className={styles.redirect}>
+              Redirecting to{" "}
+              <Link href="/login">login page</Link>…
+            </p>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (

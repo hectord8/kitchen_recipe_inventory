@@ -8,6 +8,26 @@ body {
   --page-padding: clamp(16px, 4vw, 32px);
   --foreground: black;
   --background: white;
+
+  --color-bg-page: #d2e4c4;
+  --color-bg-card: #b5cbb7;
+  --color-bg-card-alt: #e4e9b2;
+  --color-bg-filter: #e7e08b;
+  --color-bg-input: #d2e4c4;
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-border-strong: rgba(0, 0, 0, 0.35);
+
+  --color-error-bg: #fde8e8;
+  --color-error-border: #f5b5b5;
+  --color-error-text: #8a1c1c;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-round: 999px;
+
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 body {

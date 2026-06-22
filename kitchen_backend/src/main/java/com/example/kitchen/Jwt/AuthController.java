@@ -21,6 +21,9 @@ public class AuthController {
   @Value("${app.cookie.secure:true}")
   private boolean cookieSecure;
 
+  @Value("${app.cookie.domain:}")
+  private String cookieDomain;
+
   private final CustomerDAO customerDao;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
@@ -56,6 +59,9 @@ public class AuthController {
       cookie.setPath("/");
       cookie.setMaxAge(60 * 60);
       cookie.setAttribute("SameSite", "None");
+      if (!cookieDomain.isEmpty()) {
+        cookie.setDomain(cookieDomain);
+      }
       httpRes.addCookie(cookie);
 
       return ResponseEntity.ok(new LoginResponse(token, db));
@@ -73,6 +79,9 @@ public class AuthController {
     cookie.setPath("/");
     cookie.setMaxAge(0);
     cookie.setAttribute("SameSite", "None");
+    if (!cookieDomain.isEmpty()) {
+      cookie.setDomain(cookieDomain);
+    }
     httpRes.addCookie(cookie);
     return ResponseEntity.ok().build();
   }
