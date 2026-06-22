@@ -11,7 +11,7 @@ export default function Inventory() {
   const [item, setItem] = useState("");
   const [description, setDescription] = useState("");
   const [itemImage] = useState("");
-  const [imageFile, setImageFile] = useState(null);
+  // const [imageFile, setImageFile] = useState(null);
   const [quantity, setQuantity] = useState("");
   const { customer } = useContext(AuthContext);
 
@@ -124,33 +124,33 @@ export default function Inventory() {
       setError(err.message);
     }
   }
-  async function uploadReceipt(e) {
-    e.preventDefault();
-    setError("");
-
-    if (!imageFile) {
-      setError("No file detected");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", imageFile);
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      const data = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(data?.message || "Upload failed");
-      }
-    } catch (err) {
-      setError(err?.message || "Upload failed");
-    }
-  }
+  // async function uploadReceipt(e) {
+  //   e.preventDefault();
+  //   setError("");
+  //
+  //   if (!imageFile) {
+  //     setError("No file detected");
+  //     return;
+  //   }
+  //
+  //   const formData = new FormData();
+  //   formData.append("file", imageFile);
+  //
+  //   try {
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
+  //       method: "POST",
+  //       credentials: "include",
+  //       body: formData,
+  //     });
+  //
+  //     const data = await res.json().catch(() => null);
+  //     if (!res.ok) {
+  //       throw new Error(data?.message || "Upload failed");
+  //     }
+  //   } catch (err) {
+  //     setError(err?.message || "Upload failed");
+  //   }
+  // }
 
   return (
     <div className={styles.page}>
@@ -177,14 +177,14 @@ export default function Inventory() {
 
             <button onClick={handleSubmit}>create</button>
           </form>
-          <form className={styles.receipt}>
+          {/* <form className={styles.receipt}>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
             />
             <button onClick={uploadReceipt}>Get data from receipt</button>
-          </form>
+          </form> */}
           {error && <p className="errorText">{error}</p>}
 
           <div className={styles.items}>

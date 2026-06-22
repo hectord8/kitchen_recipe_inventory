@@ -12,11 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/inventory")
 public class InventoryController {
   private final InventoryDAO dao;
-  private final OcrService ocrService;
+  // private final OcrService ocrService;
 
-  public InventoryController(InventoryDAO dao, OcrService ocrService) {
+  public InventoryController(InventoryDAO dao) {
     this.dao = dao;
-    this.ocrService = ocrService;
+    // this.ocrService = ocrService;
   }
 
   @PostMapping("/items")
@@ -60,10 +60,10 @@ public class InventoryController {
     return newQty;
   }
 
-  @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<?> upload(@RequestPart("file") MultipartFile file) {
-
-    String text = ocrService.parse(file);
-    return ResponseEntity.ok(Map.of("text", text));
-  }
+  // @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  // public ResponseEntity<?> upload(@RequestPart("file") MultipartFile file) {
+  //
+  //   String text = ocrService.parse(file);
+  //   return ResponseEntity.ok(Map.of("text", text));
+  // }
 }
