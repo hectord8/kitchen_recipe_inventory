@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AuthContext } from "../auth";
 
 export default function CreateRecipe() {
-  const { customer, token, loading: authLoading } = useContext(AuthContext);
+  const { customer, loading: authLoading } = useContext(AuthContext);
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -76,7 +76,7 @@ export default function CreateRecipe() {
 
         const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/upload`, {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
           body: formData,
         });
 
@@ -98,7 +98,8 @@ export default function CreateRecipe() {
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           title: title.trim(),
           image: imageUrl,

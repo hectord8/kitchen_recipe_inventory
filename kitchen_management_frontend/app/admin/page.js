@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "@/Components/auth";
 
 export default function AdminPage() {
-  const { token, customer, loading: authLoading } = useContext(AuthContext);
+  const { customer, loading: authLoading } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -20,9 +20,8 @@ export default function AdminPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        credentials: "include", // keep if you use cookies/sessions
+        credentials: "include",
       });
 
       const data = await res.json().catch(() => null);

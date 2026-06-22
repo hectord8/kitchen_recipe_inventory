@@ -7,7 +7,7 @@ import { AuthContext } from "@/Components/auth";
 
 export default function Login() {
   const router = useRouter();
-  const { setCustomer, setToken } = useContext(AuthContext);
+  const { setCustomer } = useContext(AuthContext);
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -24,6 +24,7 @@ export default function Login() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.toLowerCase(), password }),
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -34,7 +35,6 @@ export default function Login() {
       const data = await res.json().catch(() => null);
       if (!data) throw new Error("No customer returned from server");
 
-      setToken(data.token);
       setCustomer(data.customer);
       router.push("/");
       router.refresh();

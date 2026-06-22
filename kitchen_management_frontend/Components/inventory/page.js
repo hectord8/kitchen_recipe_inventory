@@ -13,22 +13,22 @@ export default function Inventory() {
   const [itemImage] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [quantity, setQuantity] = useState("");
-  const { token, customer } = useContext(AuthContext);
+  const { customer } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!customer || !token) return;
+    if (!customer) return;
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/items/${customer.id}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
     })
       .then((r) => (r.ok ? r.json() : []))
       .then((items) => {
         setItems(items);
       });
-  }, [customer, token]);
+  }, [customer]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -39,8 +39,8 @@ export default function Inventory() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           customerId: customer.id,
           item,
@@ -84,10 +84,7 @@ export default function Inventory() {
         `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${itemId}/increase`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
       if (!res.ok) throw new Error(await res.text());
@@ -111,10 +108,7 @@ export default function Inventory() {
         `${process.env.NEXT_PUBLIC_API_URL}/inventory/item/${itemId}/decrease`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
       if (!res.ok) throw new Error(await res.text());
@@ -145,7 +139,7 @@ export default function Inventory() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
         body: formData,
       });
 

@@ -2,6 +2,7 @@ package com.example.kitchen.Jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,13 +33,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       return;
     }
 
-    String auth = request.getHeader("Authorization");
-    if (auth == null || !auth.startsWith("Bearer ")) {
+    String token = extractToken(request);
+    if (token == null) {
       chain.doFilter(request, response);
       return;
     }
-
-    String token = auth.substring(7);
 
     // Only set auth if not already authenticated
     if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -62,5 +61,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     chain.doFilter(request, response);
+  }
+
+  private static String extractToken(HttpServletRequest request) {
+    String auth = request.getHeader("Authorization");
+    if (auth != null && auth.startsWith("Bearer ")) {
+      return auth.substring(7);
+    }
+
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie c : cookies) {
+        if ("token".equals(c.getName())) {
+          String value = c.getValue();
+          if (value != null && !value.isEmpty()) {
+            return value;
+          }
+        }
+      }
+    }
+
+    return null;
   }
 }

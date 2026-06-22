@@ -37,7 +37,7 @@ function sanitizeHtml(str) {
 }
 
 export default function ClientRecipes() {
-  const { customer, token } = useContext(AuthContext);
+  const { customer } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -50,15 +50,13 @@ export default function ClientRecipes() {
   const [expandedRecipeId, setExpandedRecipeId] = useState(null);
 
   useEffect(() => {
-    if (!customer || !token) {
+    if (!customer) {
       setHeartsLoaded(true);
       return;
     }
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/ids`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: "include",
     })
       .then((r) => (r.ok ? r.json() : []))
       .then((recipes) => {
@@ -67,23 +65,22 @@ export default function ClientRecipes() {
         setHeartsLoaded(true);
       })
       .catch(() => setHeartsLoaded(true));
-  }, [customer, token]);
+  }, [customer]);
 
   useEffect(() => {
-    if (!customer || !token) {
+    if (!customer) {
       setFavoritesOnly(false);
     }
-  }, [customer, token]);
+  }, [customer]);
 
   useEffect(() => {
     const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     setLoading(true);
     setError("");
 
     fetch(endpoint, {
-      headers,
+      credentials: "include",
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
@@ -97,7 +94,7 @@ export default function ClientRecipes() {
         setError(e.message || "Failed to load recipes");
         setLoading(false);
       });
-  }, [token]);
+  }, []);
 
   const dietUi = useMemo(() => {
     const counts = new Map();
@@ -187,9 +184,7 @@ export default function ClientRecipes() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`, {
         method: isHearted ? "DELETE" : "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -295,7 +290,7 @@ export default function ClientRecipes() {
               className={`${styles.card} ${expandedRecipeId === recipeId ? styles.expanded : ""}`}
             >
               <div className={styles.imageContainer}>
-                {customer && token && (
+                {customer && (
                   <button
                     className={`${styles.heart} ${isHearted ? styles.hearted : ""}`}
                     onClick={() => toggleHeart(recipeId)}
