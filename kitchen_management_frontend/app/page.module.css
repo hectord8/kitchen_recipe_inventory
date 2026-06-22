@@ -1,11 +1,12 @@
 .page {
   background-color: #d2e4c4;
- 
+
   display: flex;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-
 }
 
-
+.main {
+  width: 100%;
+}

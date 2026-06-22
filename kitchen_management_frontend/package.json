@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "next": "16.0.10",
@@ -16,6 +18,10 @@
   "devDependencies": {
     "baseline-browser-mapping": "^2.10.35",
     "eslint": "^9",
-    "eslint-config-next": "16.0.6"
+    "eslint-config-next": "16.0.6",
+    "prettier": "^3.8.4"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

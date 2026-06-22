@@ -16,23 +16,18 @@ export default function AdminPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/recipes/import?count=5`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          credentials: "include", // keep if you use cookies/sessions
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/import?count=5`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: "include", // keep if you use cookies/sessions
+      });
 
       const data = await res.json().catch(() => null);
       if (!res.ok) {
-        throw new Error(
-          (data && (data.message || data.error)) || `Request failed: ${res.status}`
-        );
+        throw new Error((data && (data.message || data.error)) || `Request failed: ${res.status}`);
       }
 
       setResult(data);
@@ -44,8 +39,7 @@ export default function AdminPage() {
   }
 
   // basic client-side guard (still enforce on backend!)
-  const isAdmin =
-    customer?.role === "ADMIN" || customer?.email === "123@123.com"; // adjust to your logic
+  const isAdmin = customer?.role === "ADMIN" || customer?.email === "123@123.com"; // adjust to your logic
 
   if (authLoading) return <p>Loading...</p>;
   if (!customer) return <p>Please log in.</p>;
@@ -56,11 +50,7 @@ export default function AdminPage() {
       <h1>Admin</h1>
       <p>Import 200 random Spoonacular recipes into the database.</p>
 
-      <button
-        onClick={importRecipes}
-        disabled={loading}
-        className="adminButton"
-      >
+      <button onClick={importRecipes} disabled={loading} className="adminButton">
         {loading ? "Importing..." : "Import 200 recipes"}
       </button>
 
@@ -69,9 +59,7 @@ export default function AdminPage() {
       {result && (
         <div className="adminResult">
           <h3>Done ✅</h3>
-          <pre className="adminResultPre">
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <pre className="adminResultPre">{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
     </main>

@@ -4,197 +4,190 @@ import java.time.LocalDateTime;
 
 public class Recipe {
 
+  private Integer id;
+  private Integer spoonacularId;
+  private String title;
+  private String image;
+  private String summary;
+  private String instructions;
+  private String ingredientsJson;
+  private String instructionStepsJson;
+  private Integer prepMinutes;
+  private Integer cookMinutes;
+  private Integer readyMinutes;
+  private Integer calories;
+  private String diet;
+  private String category;
+  private String description;
+  private LocalDateTime createdAt;
+  private String creator;
 
-    private Integer id;
-    private Integer spoonacularId;
-    private String title;
-    private String image;
-    private String summary;
-    private String instructions;
-    private String ingredientsJson;
-    private String instructionStepsJson;
-    private Integer prepMinutes;
-    private Integer cookMinutes;
-    private Integer readyMinutes;
-    private Integer calories;
-    private String diet;
-    private String category;
-    private String description;
-    private LocalDateTime createdAt;
-    private String creator;
+  public Recipe() {}
 
+  public Recipe(
+      Integer spoonacularId,
+      String title,
+      String image,
+      String summary,
+      String instructions,
+      String ingredientsJson,
+      String instructionStepsJson,
+      Integer prepMinutes,
+      Integer cookMinutes,
+      Integer readyMinutes,
+      Integer calories,
+      String diet,
+      String creator) {
+    this.spoonacularId = spoonacularId;
+    this.title = title;
+    this.image = image;
+    this.summary = summary;
+    this.instructions = instructions;
+    this.ingredientsJson = ingredientsJson;
+    this.instructionStepsJson = instructionStepsJson;
+    this.prepMinutes = prepMinutes;
+    this.cookMinutes = cookMinutes;
+    this.readyMinutes = readyMinutes;
+    this.calories = calories;
+    this.diet = diet;
+    this.creator = creator;
+  }
 
+  // ===== Getters & Setters =====
 
-    public Recipe() {}
+  public Integer getId() {
+    return id;
+  }
 
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public Recipe(
-            Integer spoonacularId,
-            String title,
-            String image,
-            String summary,
-            String instructions,
-            String ingredientsJson,
-            String instructionStepsJson,
-            Integer prepMinutes,
-            Integer cookMinutes,
-            Integer readyMinutes,
-            Integer calories,
-            String diet,
-            String creator
-    ) {
-        this.spoonacularId = spoonacularId;
-        this.title = title;
-        this.image = image;
-        this.summary = summary;
-        this.instructions = instructions;
-        this.ingredientsJson = ingredientsJson;
-        this.instructionStepsJson = instructionStepsJson;
-        this.prepMinutes = prepMinutes;
-        this.cookMinutes = cookMinutes;
-        this.readyMinutes = readyMinutes;
-        this.calories = calories;
-        this.diet = diet;
-        this.creator = creator;
-    }
+  public Integer getSpoonacularId() {
+    return spoonacularId;
+  }
 
+  public void setSpoonacularId(Integer spoonacularId) {
+    this.spoonacularId = spoonacularId;
+  }
 
-    // ===== Getters & Setters =====
+  public String getTitle() {
+    return title;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public String getImage() {
+    return image;
+  }
 
-    public Integer getSpoonacularId() {
-        return spoonacularId;
-    }
+  public void setImage(String image) {
+    this.image = image;
+  }
 
-    public void setSpoonacularId(Integer spoonacularId) {
-        this.spoonacularId = spoonacularId;
-    }
+  public String getSummary() {
+    return summary;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setSummary(String summary) {
+    this.summary = summary;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getInstructions() {
+    return instructions;
+  }
 
-    public String getImage() {
-        return image;
-    }
+  public void setInstructions(String instructions) {
+    this.instructions = instructions;
+  }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+  public String getIngredientsJson() {
+    return ingredientsJson;
+  }
 
-    public String getSummary() {
-        return summary;
-    }
+  public void setIngredientsJson(String ingredientsJson) {
+    this.ingredientsJson = ingredientsJson;
+  }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+  public String getInstructionStepsJson() {
+    return instructionStepsJson;
+  }
 
-    public String getInstructions() {
-        return instructions;
-    }
+  public void setInstructionStepsJson(String instructionStepsJson) {
+    this.instructionStepsJson = instructionStepsJson;
+  }
 
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
+  public Integer getPrepMinutes() {
+    return prepMinutes;
+  }
 
-    public String getIngredientsJson() {
-        return ingredientsJson;
-    }
+  public void setPrepMinutes(Integer prepMinutes) {
+    this.prepMinutes = prepMinutes;
+  }
 
-    public void setIngredientsJson(String ingredientsJson) {
-        this.ingredientsJson = ingredientsJson;
-    }
+  public Integer getCookMinutes() {
+    return cookMinutes;
+  }
 
-    public String getInstructionStepsJson() {
-        return instructionStepsJson;
-    }
+  public void setCookMinutes(Integer cookMinutes) {
+    this.cookMinutes = cookMinutes;
+  }
 
-    public void setInstructionStepsJson(String instructionStepsJson) {
-        this.instructionStepsJson = instructionStepsJson;
-    }
+  public Integer getReadyMinutes() {
+    return readyMinutes;
+  }
 
+  public void setReadyMinutes(Integer readyMinutes) {
+    this.readyMinutes = readyMinutes;
+  }
 
-    public Integer getPrepMinutes() {
-        return prepMinutes;
-    }
+  public Integer getCalories() {
+    return calories;
+  }
 
-    public void setPrepMinutes(Integer prepMinutes) {
-        this.prepMinutes = prepMinutes;
-    }
+  public void setCalories(Integer calories) {
+    this.calories = calories;
+  }
 
-    public Integer getCookMinutes() {
-        return cookMinutes;
-    }
+  public String getDiet() {
+    return diet;
+  }
 
-    public void setCookMinutes(Integer cookMinutes) {
-        this.cookMinutes = cookMinutes;
-    }
+  public void setDiet(String diet) {
+    this.diet = diet;
+  }
 
-    public Integer getReadyMinutes() {
-        return readyMinutes;
-    }
+  public String getCategory() {
+    return category;
+  }
 
-    public void setReadyMinutes(Integer readyMinutes) {
-        this.readyMinutes = readyMinutes;
-    }
+  public void setCategory(String category) {
+    this.category = category;
+  }
 
-    public Integer getCalories() {
-        return calories;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setCalories(Integer calories) {
-        this.calories = calories;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public String getDiet() {
-        return diet;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setDiet(String diet) {
-        this.diet = diet;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public String getCategory() {
-        return category;
-    }
+  public String getCreator() {
+    return creator;
+  }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
 }

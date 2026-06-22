@@ -15,7 +15,6 @@ export default function Inventory() {
   const [quantity, setQuantity] = useState("");
   const { token, customer } = useContext(AuthContext);
 
-
   useEffect(() => {
     if (!customer || !token) return;
 
@@ -36,23 +35,20 @@ export default function Inventory() {
     setError("");
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/inventory/items`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            customerId: customer.id,
-            item,
-            description,
-            image: itemImage,
-            quantity,
-          }),
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          customerId: customer.id,
+          item,
+          description,
+          image: itemImage,
+          quantity,
+        }),
+      });
 
       const text = await res.text();
       let payload;
@@ -67,9 +63,7 @@ export default function Inventory() {
           ? Object.entries(payload.errors)
               .map(([k, v]) => `${k}: ${v}`)
               .join(", ")
-          : payload?.message ||
-            (typeof payload === "string" && payload) ||
-            "Request failed";
+          : payload?.message || (typeof payload === "string" && payload) || "Request failed";
         throw new Error(msg);
       }
 
@@ -100,9 +94,7 @@ export default function Inventory() {
 
       const newQty = await res.json();
       setItems((prev) =>
-        prev.map((it) =>
-          it.item_id === itemId ? { ...it, quantity: newQty } : it
-        )
+        prev.map((it) => (it.item_id === itemId ? { ...it, quantity: newQty } : it))
       );
     } catch (err) {
       setError(err.message);
@@ -110,9 +102,7 @@ export default function Inventory() {
   }
   async function decreaseQuantity(itemId, currentQty) {
     if (currentQty === 1) {
-      const confirmed = window.confirm(
-        "This will remove the item from your inventory. Continue?"
-      );
+      const confirmed = window.confirm("This will remove the item from your inventory. Continue?");
 
       if (!confirmed) return;
     }
@@ -134,45 +124,39 @@ export default function Inventory() {
           return prev.filter((it) => it.item_id !== itemId);
         }
 
-        return prev.map((it) =>
-          it.item_id === itemId ? { ...it, quantity: newQty } : it
-        );
+        return prev.map((it) => (it.item_id === itemId ? { ...it, quantity: newQty } : it));
       });
     } catch (err) {
       setError(err.message);
     }
   }
-async function uploadReceipt(e) {
-  e.preventDefault();
-  setError("");
+  async function uploadReceipt(e) {
+    e.preventDefault();
+    setError("");
 
-  if (!imageFile) {
-    setError("No file detected");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("file", imageFile);
-
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    const data = await res.json().catch(() => null);
-    if (!res.ok) {
-      throw new Error(data?.message || "Upload failed");
+    if (!imageFile) {
+      setError("No file detected");
+      return;
     }
 
+    const formData = new FormData();
+    formData.append("file", imageFile);
 
-  } catch (err) {
-    setError(err?.message || "Upload failed");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.message || "Upload failed");
+      }
+    } catch (err) {
+      setError(err?.message || "Upload failed");
+    }
   }
-}
-
 
   return (
     <div className={styles.page}>
@@ -209,7 +193,6 @@ async function uploadReceipt(e) {
           </form>
           {error && <p className="errorText">{error}</p>}
 
-
           <div className={styles.items}>
             <table className={styles.table}>
               <tbody>
@@ -224,15 +207,9 @@ async function uploadReceipt(e) {
                       <td>{row.item}</td>
                       <td>{row.description}</td>
                       <td>
-                        <button onClick={() => increaseQuantity(row.item_id)}>
-                          +
-                        </button>{" "}
+                        <button onClick={() => increaseQuantity(row.item_id)}>+</button>{" "}
                         {row.quantity}{" "}
-                        <button
-                          onClick={() =>
-                            decreaseQuantity(row.item_id, row.quantity)
-                          }
-                        >
+                        <button onClick={() => decreaseQuantity(row.item_id, row.quantity)}>
                           -
                         </button>{" "}
                       </td>

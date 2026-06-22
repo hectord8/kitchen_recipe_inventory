@@ -1,11 +1,11 @@
-.page{
-    background-color: #d2e4c4;
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px 16px;
+.page {
+  background-color: #d2e4c4;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
 }
 
 .main {
@@ -21,7 +21,8 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
-.helper {
+.helper,
+.hint {
   color: #2b2b2b;
   font-size: 14px;
 }
@@ -41,7 +42,7 @@
   gap: 12px;
 }
 
-.form input{
+.form input {
   height: 48px;
   width: 100%;
   padding: 10px 12px;
@@ -49,32 +50,36 @@
   background-color: #d2e4c4;
   border: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.form input:focus-visible{
+.form input:focus-visible {
   outline: none;
   border-color: rgba(0, 0, 0, 0.35);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
-.form button{
+.form button {
   height: 48px;
   width: 100%;
-  border: 1px solid #e7e08b;
   border-radius: 16px;
   background-color: #d2e4c4;
   border: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  color: black;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.form button:hover{
+.form button:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.form button:disabled{
+.form button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
   transform: none;
@@ -87,7 +92,7 @@
   color: black;
 }
 
-.createaccount:hover{
+.createaccount:hover {
   text-decoration: underline;
 }
 

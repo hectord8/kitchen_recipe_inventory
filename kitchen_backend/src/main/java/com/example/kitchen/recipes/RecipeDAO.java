@@ -1,5 +1,6 @@
 package com.example.kitchen.recipes;
 
+import java.util.List;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
@@ -7,12 +8,11 @@ import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
-import java.util.List;
-
 @RegisterBeanMapper(Recipe.class)
 public interface RecipeDAO {
 
-    @SqlQuery("""
+  @SqlQuery(
+      """
         SELECT
             id,
             spoonacular_id AS spoonacularId,
@@ -35,17 +35,19 @@ public interface RecipeDAO {
         FROM recipes
         ORDER BY id DESC
     """)
-    List<Recipe> getAllRecipes();
+  List<Recipe> getAllRecipes();
 
-    @SqlQuery("""
+  @SqlQuery(
+      """
         SELECT DISTINCT TRIM(diet)
         FROM recipes
         WHERE diet IS NOT NULL AND TRIM(diet) <> ''
         ORDER BY TRIM(diet)
     """)
-    List<String> getAllDiets();
+  List<String> getAllDiets();
 
-    @SqlUpdate("""
+  @SqlUpdate(
+      """
         INSERT INTO recipes (
             spoonacular_id,
             title,
@@ -82,18 +84,16 @@ public interface RecipeDAO {
         )
 
     """)
-    @GetGeneratedKeys
-    Recipe insert(@BindBean Recipe recipe);
+  @GetGeneratedKeys
+  Recipe insert(@BindBean Recipe recipe);
 
-
-
-
-    @SqlQuery("""
+  @SqlQuery(
+      """
         SELECT EXISTS(
             SELECT 1
             FROM recipes
             WHERE spoonacular_id = :spoonacularId
         )
     """)
-    boolean existsBySpoonacularId(@Bind("spoonacularId") int spoonacularId);
+  boolean existsBySpoonacularId(@Bind("spoonacularId") int spoonacularId);
 }

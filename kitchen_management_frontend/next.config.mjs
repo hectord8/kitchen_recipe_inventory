@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
-    images: {
+  images: {
     remotePatterns: [
       {
         protocol: "https",
@@ -11,6 +11,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "api.hexhax.store",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8080",
         pathname: "/uploads/**",
       },
     ],

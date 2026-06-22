@@ -7,7 +7,6 @@ import styles from "./navbar.module.css";
 import Image from "next/image";
 
 export default function Nav() {
- 
   const { customer, setCustomer, loading, setToken } = useContext(AuthContext);
 
   async function logOut() {
@@ -19,13 +18,7 @@ export default function Nav() {
     <div className={styles.nav}>
       <Link className={styles.logoLink} href="/">
         <div className={styles.imageContainer}>
-          <Image
-            src="/logo.png"
-            sizes="100vw"
-            fill
-            alt="logo"
-            style={{ objectFit: "contain" }}
-          />
+          <Image src="/logo.png" sizes="100vw" fill alt="logo" style={{ objectFit: "contain" }} />
         </div>
       </Link>
       {!loading && customer && customer.firstName === "hector" && (

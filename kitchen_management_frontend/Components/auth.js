@@ -39,7 +39,7 @@ export default function AuthProvider({ children }) {
           localStorage.removeItem("token");
           setTokenState(null);
           setCustomer(null);
-          router.push("/"); 
+          router.push("/");
         } else {
           setCustomer(data);
         }

@@ -33,7 +33,7 @@ export default function CreateAccount() {
       const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, password, email })
+        body: JSON.stringify({ firstName, password, email }),
       });
 
       if (!res.ok) {
@@ -57,12 +57,13 @@ export default function CreateAccount() {
     }
   }
 
-
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <h2>Create account</h2>
-        <p className={styles.helper}>Create a new account to save recipes and track your inventory.</p>
+        <p className={styles.helper}>
+          Create a new account to save recipes and track your inventory.
+        </p>
 
         {(error || Object.keys(fieldErrors).length > 0) && (
           <div className={styles.errorBox} role="alert" aria-live="polite">
@@ -107,7 +108,6 @@ export default function CreateAccount() {
             {isSubmitting ? "Creating..." : "Create account"}
           </button>
         </form>
-
       </main>
     </div>
   );

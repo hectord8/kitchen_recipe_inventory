@@ -7,7 +7,10 @@ import styles from "./page.module.css"; // adjust path if needed
 
 import { AuthContext } from "../auth";
 
-const normalize = (value) => String(value ?? "").trim().toLowerCase();
+const normalize = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase();
 
 const formatDietLabel = (dietKey) =>
   normalize(dietKey)
@@ -28,7 +31,6 @@ const parseDiets = (dietField) =>
     .map((diet) => normalize(diet))
     .filter(Boolean);
 
-
 export default function ClientRecipes() {
   const { customer, token } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
@@ -41,7 +43,6 @@ export default function ClientRecipes() {
   const [heartedIds, setHeartedIds] = useState(new Set());
   const [heartsLoaded, setHeartsLoaded] = useState(false);
   const [expandedRecipeId, setExpandedRecipeId] = useState(null);
-
 
   useEffect(() => {
     if (!customer || !token) {
@@ -70,7 +71,6 @@ export default function ClientRecipes() {
   }, [customer, token]);
 
   useEffect(() => {
-
     const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
@@ -93,8 +93,6 @@ export default function ClientRecipes() {
         setLoading(false);
       });
   }, [token]);
-
-
 
   const dietUi = useMemo(() => {
     const counts = new Map();
@@ -149,7 +147,6 @@ export default function ClientRecipes() {
     };
   }, [recipes, selectedDiet]);
 
-
   const filteredRecipes = useMemo(() => {
     const q = search.toLowerCase().trim();
     const selectedDietNorm = normalize(selectedDiet);
@@ -164,23 +161,14 @@ export default function ClientRecipes() {
       const recipeDiets = parseDiets(r.diet);
       const dietOk = !selectedDietNorm || recipeDiets.includes(selectedDietNorm);
 
-      const favoriteOk =
-        !favoritesOnly || (heartsLoaded && heartedIds.has(Number(r.id)));
+      const favoriteOk = !favoritesOnly || (heartsLoaded && heartedIds.has(Number(r.id)));
 
       return searchOk && dietOk && favoriteOk;
     });
-  }, [
-    recipes,
-    selectedDiet,
-    search,
-    favoritesOnly,
-    heartedIds,
-    heartsLoaded,
-  ]);
+  }, [recipes, selectedDiet, search, favoritesOnly, heartedIds, heartsLoaded]);
 
   if (loading) return <p>Loading recipes...</p>;
   if (error) return <p className="errorText">{error}</p>;
-
 
   async function toggleHeart(id) {
     const isHearted = heartedIds.has(id);
@@ -192,21 +180,17 @@ export default function ClientRecipes() {
     });
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`,
-        {
-          method: isHearted ? "DELETE" : "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saved-recipes/${id}`, {
+        method: isHearted ? "DELETE" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!res.ok) {
         throw new Error("Failed to update saved recipe");
       }
     } catch (err) {
-
       setHeartedIds((prev) => {
         const next = new Set(prev);
         isHearted ? next.add(id) : next.delete(id);
@@ -303,9 +287,7 @@ export default function ClientRecipes() {
           return (
             <div
               key={recipeId}
-              className={`${styles.card} ${
-                expandedRecipeId === recipeId ? styles.expanded : ""
-              }`}
+              className={`${styles.card} ${expandedRecipeId === recipeId ? styles.expanded : ""}`}
             >
               <div className={styles.imageContainer}>
                 {customer && token && (
@@ -318,7 +300,11 @@ export default function ClientRecipes() {
                   />
                 )}
                 <Image
-                  src={recipe.image?.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${recipe.image}` : (recipe.image || "/burger.jpg")}
+                  src={
+                    recipe.image?.startsWith("/")
+                      ? `${process.env.NEXT_PUBLIC_API_URL}${recipe.image}`
+                      : recipe.image || "/burger.jpg"
+                  }
                   sizes="100vw"
                   fill
                   alt={recipe.title || "Recipe image"}
@@ -335,22 +321,21 @@ export default function ClientRecipes() {
               <h5>Total Time: {recipe.readyMinutes} </h5>
               {expandedRecipeId === recipeId && (
                 <>
-                  <button className={styles.closeBtn} onClick={() => setExpandedRecipeId(null)}>×</button>
-                  <div className={styles.summary} dangerouslySetInnerHTML={{ __html: recipe.summary }} />
+                  <button className={styles.closeBtn} onClick={() => setExpandedRecipeId(null)}>
+                    ×
+                  </button>
+                  <div
+                    className={styles.summary}
+                    dangerouslySetInnerHTML={{ __html: recipe.summary }}
+                  />
                 </>
               )}
               <button
-
                 className={styles.details}
-                onClick={() =>
-                  setExpandedRecipeId(
-                    expandedRecipeId === recipeId ? null : recipeId
-                  )
-                }
+                onClick={() => setExpandedRecipeId(expandedRecipeId === recipeId ? null : recipeId)}
               >
                 {expandedRecipeId === recipeId ? "See less" : "See more"}
               </button>
-
 
               <p>Created by {recipe.creator}. </p>
             </div>

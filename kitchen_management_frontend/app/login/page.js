@@ -23,7 +23,7 @@ export default function Login() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.toLowerCase(), password })
+        body: JSON.stringify({ email: email.toLowerCase(), password }),
       });
 
       if (!res.ok) {
@@ -44,7 +44,6 @@ export default function Login() {
       setIsSubmitting(false);
     }
   }
-
 
   return (
     <div className={styles.page}>
@@ -86,14 +85,12 @@ export default function Login() {
           </button>
         </form>
 
-
         <p>
           If you don&apos;t have an account
           <Link className={styles.createaccount} href="/CreateAccount">
             - Create one
           </Link>
         </p>
-
       </div>
     </div>
   );

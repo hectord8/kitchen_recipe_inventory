@@ -37,13 +37,10 @@ export default function CreateRecipe() {
     if (!title.trim()) errors.title = "Title is required";
     if (!category) errors.category = "Category is required";
     const prep = Number(prepTime);
-    if (prepTime !== "" && (Number.isNaN(prep) || prep < 0))
-      errors.prepTime = "Must be 0 or more";
+    if (prepTime !== "" && (Number.isNaN(prep) || prep < 0)) errors.prepTime = "Must be 0 or more";
     const cook = Number(cookTime);
-    if (cookTime !== "" && (Number.isNaN(cook) || cook < 0))
-      errors.cookTime = "Must be 0 or more";
-    if (description.length > 1000)
-      errors.description = "Must be 1000 characters or less";
+    if (cookTime !== "" && (Number.isNaN(cook) || cook < 0)) errors.cookTime = "Must be 0 or more";
+    if (description.length > 1000) errors.description = "Must be 1000 characters or less";
     return errors;
   }
 
@@ -86,7 +83,11 @@ export default function CreateRecipe() {
         if (!uploadRes.ok) {
           const text = await uploadRes.text();
           let detail;
-          try { detail = JSON.parse(text); } catch { detail = text; }
+          try {
+            detail = JSON.parse(text);
+          } catch {
+            detail = text;
+          }
           throw new Error(detail?.error || detail || "Image upload failed");
         }
 
@@ -146,7 +147,10 @@ export default function CreateRecipe() {
             <input
               placeholder="e.g. Classic Margherita Pizza"
               value={title}
-              onChange={(e) => { setTitle(e.target.value); clearError("title"); }}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                clearError("title");
+              }}
               className={fieldErrors.title ? styles.inputError : ""}
             />
             {fieldErrors.title && <span className={styles.fieldError}>{fieldErrors.title}</span>}
@@ -171,9 +175,7 @@ export default function CreateRecipe() {
               }}
               className={fieldErrors.image ? styles.inputError : ""}
             />
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" className={styles.preview} />
-            )}
+            {imagePreview && <img src={imagePreview} alt="Preview" className={styles.preview} />}
             {fieldErrors.image && <span className={styles.fieldError}>{fieldErrors.image}</span>}
           </label>
 
@@ -182,7 +184,10 @@ export default function CreateRecipe() {
               Category
               <select
                 value={category}
-                onChange={(e) => { setCategory(e.target.value); clearError("category"); }}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  clearError("category");
+                }}
                 className={fieldErrors.category ? styles.inputError : ""}
               >
                 <option value="MAIN">Main</option>
@@ -191,7 +196,9 @@ export default function CreateRecipe() {
                 <option value="BREAKFAST">Breakfast</option>
                 <option value="DRINK">Drink</option>
               </select>
-              {fieldErrors.category && <span className={styles.fieldError}>{fieldErrors.category}</span>}
+              {fieldErrors.category && (
+                <span className={styles.fieldError}>{fieldErrors.category}</span>
+              )}
             </label>
 
             <label className={styles.label}>
@@ -214,10 +221,15 @@ export default function CreateRecipe() {
                 min="0"
                 placeholder="e.g. 15"
                 value={prepTime}
-                onChange={(e) => { setPrepTime(e.target.value); clearError("prepTime"); }}
+                onChange={(e) => {
+                  setPrepTime(e.target.value);
+                  clearError("prepTime");
+                }}
                 className={fieldErrors.prepTime ? styles.inputError : ""}
               />
-              {fieldErrors.prepTime && <span className={styles.fieldError}>{fieldErrors.prepTime}</span>}
+              {fieldErrors.prepTime && (
+                <span className={styles.fieldError}>{fieldErrors.prepTime}</span>
+              )}
             </label>
 
             <label className={styles.label}>
@@ -227,10 +239,15 @@ export default function CreateRecipe() {
                 min="0"
                 placeholder="e.g. 30"
                 value={cookTime}
-                onChange={(e) => { setCookTime(e.target.value); clearError("cookTime"); }}
+                onChange={(e) => {
+                  setCookTime(e.target.value);
+                  clearError("cookTime");
+                }}
                 className={fieldErrors.cookTime ? styles.inputError : ""}
               />
-              {fieldErrors.cookTime && <span className={styles.fieldError}>{fieldErrors.cookTime}</span>}
+              {fieldErrors.cookTime && (
+                <span className={styles.fieldError}>{fieldErrors.cookTime}</span>
+              )}
             </label>
           </div>
 
@@ -239,11 +256,16 @@ export default function CreateRecipe() {
             <textarea
               placeholder="Description"
               value={description}
-              onChange={(e) => { setDescription(e.target.value); clearError("description"); }}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                clearError("description");
+              }}
               rows={5}
               className={fieldErrors.description ? styles.inputError : ""}
             />
-            {fieldErrors.description && <span className={styles.fieldError}>{fieldErrors.description}</span>}
+            {fieldErrors.description && (
+              <span className={styles.fieldError}>{fieldErrors.description}</span>
+            )}
           </label>
 
           {fieldErrors._general && <p className={styles.errorText}>{fieldErrors._general}</p>}
