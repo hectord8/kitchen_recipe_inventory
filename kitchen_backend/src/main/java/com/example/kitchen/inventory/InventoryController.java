@@ -55,8 +55,9 @@ public class InventoryController {
 
   @PatchMapping("/item/{itemsId}/decrease")
   public int decreaseQuantity(@PathVariable("itemsId") int itemsId) {
-
-    return dao.decreaseQuantity(itemsId);
+    int newQty = dao.decreaseQuantity(itemsId);
+    dao.cleanUpZeroQuantity();
+    return newQty;
   }
 
   @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

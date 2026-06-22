@@ -38,8 +38,7 @@ export default function AdminPage() {
     }
   }
 
-  // basic client-side guard (still enforce on backend!)
-  const isAdmin = customer?.role === "ADMIN" || customer?.email === "123@123.com"; // adjust to your logic
+  const isAdmin = customer?.role === "ADMIN";
 
   if (authLoading) return <p>Loading...</p>;
   if (!customer) return <p>Please log in.</p>;

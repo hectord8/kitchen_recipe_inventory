@@ -3,6 +3,8 @@ package com.example.kitchen.Jwt;
 import com.example.kitchen.customer.Customer;
 import com.example.kitchen.customer.CustomerDAO;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+  private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
   private final CustomerDAO customerDao;
   private final PasswordEncoder passwordEncoder;
@@ -35,12 +39,14 @@ public class AuthController {
       boolean ok = passwordEncoder.matches(req.password(), db.getPassword());
       if (!ok) return ResponseEntity.status(401).body("Invalid login (wrong password)");
 
-      String token = jwtService.generateToken(db.getEmail(), Map.of("id", db.getId()));
+      String token =
+          jwtService.generateToken(
+              db.getEmail(), Map.of("id", db.getId(), "role", db.getRole()));
       db.setPassword(null);
 
       return ResponseEntity.ok(new LoginResponse(token, db));
     } catch (Exception e) {
-      e.printStackTrace(); // IMPORTANT: prints real reason in console
+      log.error("Login failed for {}", req.email(), e);
       return ResponseEntity.status(500).body("Server error: " + e.getMessage());
     }
   }

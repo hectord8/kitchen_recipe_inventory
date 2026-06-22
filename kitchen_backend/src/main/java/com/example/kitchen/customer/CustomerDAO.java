@@ -14,48 +14,54 @@ public class CustomerDAO {
 
   public Customer insert(Customer c) {
     jdbc.update(
-        "INSERT INTO CUSTOMERS (firstname, PASSWORD, EMAIL) VALUES (?, ?, ?)",
+        "INSERT INTO CUSTOMERS (firstname, PASSWORD, EMAIL, role) VALUES (?, ?, ?, ?)",
         c.getFirstName(),
         c.getPassword(),
-        c.getEmail());
+        c.getEmail(),
+        c.getRole());
 
     return c;
   }
 
   public List<Customer> getAll() {
     return jdbc.query(
-        "SELECT id, firstname, PASSWORD, email FROM customers",
+        "SELECT id, firstname, PASSWORD, email, role FROM customers",
         (rs, rowNum) ->
             new Customer(
                 rs.getInt("id"),
                 rs.getString("firstname"),
                 rs.getString("PASSWORD"),
-                rs.getString("email")));
+                rs.getString("email"),
+                rs.getString("role")));
   }
 
   public Customer getCustomerByLogin(String email) {
-
-    return jdbc.queryForObject(
-        "SELECT id, firstname, PASSWORD, email FROM customers WHERE LOWER(email) = LOWER(?)",
-        (rs, rowNum) ->
-            new Customer(
-                rs.getInt("id"),
-                rs.getString("firstname"),
-                rs.getString("PASSWORD"),
-                rs.getString("email")),
-        email);
+    List<Customer> results =
+        jdbc.query(
+            "SELECT id, firstname, PASSWORD, email, role FROM customers WHERE LOWER(email) = LOWER(?)",
+            (rs, rowNum) ->
+                new Customer(
+                    rs.getInt("id"),
+                    rs.getString("firstname"),
+                    rs.getString("PASSWORD"),
+                    rs.getString("email"),
+                    rs.getString("role")),
+            email);
+    return results.isEmpty() ? null : results.get(0);
   }
 
   public Customer getById(int id) {
-
-    return jdbc.queryForObject(
-        "SELECT id, firstname, email, password FROM customers WHERE id = ?",
-        (rs, rowNum) ->
-            new Customer(
-                rs.getInt("id"),
-                rs.getString("firstname"),
-                rs.getString("PASSWORD"),
-                rs.getString("email")),
-        id);
+    List<Customer> results =
+        jdbc.query(
+            "SELECT id, firstname, email, password, role FROM customers WHERE id = ?",
+            (rs, rowNum) ->
+                new Customer(
+                    rs.getInt("id"),
+                    rs.getString("firstname"),
+                    rs.getString("PASSWORD"),
+                    rs.getString("email"),
+                    rs.getString("role")),
+            id);
+    return results.isEmpty() ? null : results.get(0);
   }
 }

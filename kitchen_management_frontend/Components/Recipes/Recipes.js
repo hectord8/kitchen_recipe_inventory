@@ -31,6 +31,11 @@ const parseDiets = (dietField) =>
     .map((diet) => normalize(diet))
     .filter(Boolean);
 
+function sanitizeHtml(str) {
+  if (!str) return "";
+  return str.replace(/<[^>]*>/g, "");
+}
+
 export default function ClientRecipes() {
   const { customer, token } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
@@ -324,10 +329,9 @@ export default function ClientRecipes() {
                   <button className={styles.closeBtn} onClick={() => setExpandedRecipeId(null)}>
                     ×
                   </button>
-                  <div
-                    className={styles.summary}
-                    dangerouslySetInnerHTML={{ __html: recipe.summary }}
-                  />
+                  <div className={styles.summary}>
+                    {sanitizeHtml(recipe.summary)}
+                  </div>
                 </>
               )}
               <button

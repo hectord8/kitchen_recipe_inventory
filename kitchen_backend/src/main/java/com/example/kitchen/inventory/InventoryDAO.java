@@ -60,28 +60,28 @@ public interface InventoryDAO {
 
   @SqlQuery(
       """
-                    UPDATE inventory set quantity = quantity + 1
-
-                    where item_id = :itemId
-                     AND quantity >= 0
-                     RETURNING quantity;
-
-            """)
+          UPDATE inventory
+          SET quantity = quantity + 1
+          WHERE item_id = :itemId
+          AND quantity >= 0
+          RETURNING quantity
+      """)
   int increaseQuantity(@Bind("itemId") int itemId);
 
   @SqlQuery(
       """
-                    UPDATE inventory
-                    set quantity = quantity - 1
-
-                    where item_id = :itemId
-                     AND quantity > 0
-                     RETURNING quantity;
-
-                     DELETE FROM inventory
-                     where quantity <= 0
-
-
-            """)
+          UPDATE inventory
+          SET quantity = quantity - 1
+          WHERE item_id = :itemId
+          AND quantity > 0
+          RETURNING quantity
+      """)
   int decreaseQuantity(@Bind("itemId") int itemId);
+
+  @SqlUpdate(
+      """
+          DELETE FROM inventory
+          WHERE quantity <= 0
+      """)
+  void cleanUpZeroQuantity();
 }

@@ -21,7 +21,7 @@ export default function Nav() {
           <Image src="/logo.png" sizes="100vw" fill alt="logo" style={{ objectFit: "contain" }} />
         </div>
       </Link>
-      {!loading && customer && customer.firstName === "hector" && (
+      {!loading && customer && customer.role === "ADMIN" && (
         <Link className={styles.link} href="/admin">
           Admin
         </Link>
