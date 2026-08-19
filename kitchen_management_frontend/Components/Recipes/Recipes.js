@@ -50,6 +50,8 @@ export default function ClientRecipes() {
   const { customer } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(8);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [error, setError] = useState("");
 
@@ -85,9 +87,35 @@ export default function ClientRecipes() {
 
   useEffect(() => {
     const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/recipes`;
+    const startedAt = Date.now();
+    let loadingScreenVisible = false;
+    let finishTimer;
 
     setLoading(true);
+    setLoadingProgress(8);
     setError("");
+
+    const revealTimer = setTimeout(() => {
+      loadingScreenVisible = true;
+      setShowLoading(true);
+    }, 180);
+
+    const progressTimer = setInterval(() => {
+      setLoadingProgress((current) => Math.min(current + 4, 85));
+    }, 120);
+
+    const finishLoading = () => {
+      clearTimeout(revealTimer);
+      clearInterval(progressTimer);
+      setLoadingProgress(100);
+      const elapsed = Date.now() - startedAt;
+      const minimumVisibleTime = 220;
+      const remainingVisibleTime = loadingScreenVisible
+        ? Math.max(0, minimumVisibleTime - elapsed)
+        : 0;
+
+      finishTimer = setTimeout(() => setLoading(false), remainingVisibleTime);
+    };
 
     fetch(endpoint, {
       credentials: "include",
@@ -98,12 +126,18 @@ export default function ClientRecipes() {
       })
       .then((data) => {
         setRecipes(data || []);
-        setLoading(false);
+        finishLoading();
       })
       .catch((e) => {
         setError(e.message || "Failed to load recipes");
-        setLoading(false);
+        finishLoading();
       });
+
+    return () => {
+      clearTimeout(revealTimer);
+      clearTimeout(finishTimer);
+      clearInterval(progressTimer);
+    };
   }, []);
 
   const dietUi = useMemo(() => {
@@ -179,7 +213,27 @@ export default function ClientRecipes() {
     });
   }, [recipes, selectedDiet, search, favoritesOnly, heartedIds, heartsLoaded]);
 
-  if (loading) return <p>Loading recipes...</p>;
+  if (loading) {
+    if (!showLoading) return null;
+
+    return (
+      <div className={styles.loadingScreen} role="status" aria-live="polite">
+        <div className={styles.loadingContent}>
+          <p>Loading recipes...</p>
+          <div
+            className={styles.progressTrack}
+            role="progressbar"
+            aria-label="Loading recipes"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={loadingProgress}
+          >
+            <div className={styles.progressBar} style={{ width: `${loadingProgress}%` }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (error) return <p className="errorText">{error}</p>;
 
   async function toggleHeart(id) {

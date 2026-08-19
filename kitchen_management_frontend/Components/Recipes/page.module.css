@@ -1,5 +1,41 @@
 /* Recipes */
 
+.loadingScreen {
+  min-height: 60vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background: var(--color-bg-page);
+}
+
+.loadingContent {
+  width: min(360px, 100%);
+  text-align: center;
+}
+
+.loadingContent p {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.progressTrack {
+  height: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-round);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-bg-filter);
+  transition: width 180ms ease-out;
+}
+
 .main {
   display: flex;
   gap: 16px;
