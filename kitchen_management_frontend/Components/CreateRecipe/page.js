@@ -176,7 +176,14 @@ export default function CreateRecipe() {
               }}
               className={fieldErrors.image ? styles.inputError : ""}
             />
-            {imagePreview && <img src={imagePreview} alt="Preview" className={styles.preview} />}
+            {imagePreview && (
+              <div
+                className={styles.preview}
+                role="img"
+                aria-label="Recipe image preview"
+                style={{ backgroundImage: `url(${imagePreview})` }}
+              />
+            )}
             {fieldErrors.image && <span className={styles.fieldError}>{fieldErrors.image}</span>}
           </label>
 

@@ -379,26 +379,19 @@ export default function ClientRecipes() {
               <h2>{recipe.title}</h2>
 
               <div className={styles.meta}>
-                {recipe.category && (
-                  <span className={styles.tag}>{recipe.category}</span>
-                )}
-                {recipe.diet && parseDiets(recipe.diet).map((d) => (
-                  <span key={d} className={styles.tag}>{formatDietLabel(d)}</span>
-                ))}
-                {recipe.calories && (
-                  <span className={styles.tag}>{recipe.calories} cal</span>
-                )}
+                {recipe.category && <span className={styles.tag}>{recipe.category}</span>}
+                {recipe.diet &&
+                  parseDiets(recipe.diet).map((d) => (
+                    <span key={d} className={styles.tag}>
+                      {formatDietLabel(d)}
+                    </span>
+                  ))}
+                {recipe.calories && <span className={styles.tag}>{recipe.calories} cal</span>}
               </div>
 
-              {recipe.prepMinutes != null && (
-                <h5>Prep Time: {recipe.prepMinutes}m</h5>
-              )}
-              {recipe.cookMinutes != null && (
-                <h5>Cook Time: {recipe.cookMinutes}m</h5>
-              )}
-              {recipe.readyMinutes != null && (
-                <h5>Total Time: {recipe.readyMinutes}m</h5>
-              )}
+              {recipe.prepMinutes != null && <h5>Prep Time: {recipe.prepMinutes}m</h5>}
+              {recipe.cookMinutes != null && <h5>Cook Time: {recipe.cookMinutes}m</h5>}
+              {recipe.readyMinutes != null && <h5>Total Time: {recipe.readyMinutes}m</h5>}
               {expandedRecipeId === recipeId && (
                 <>
                   <button className={styles.closeBtn} onClick={() => setExpandedRecipeId(null)}>
@@ -444,7 +437,7 @@ export default function ClientRecipes() {
                 {expandedRecipeId === recipeId ? "See less" : "See more"}
               </button>
 
-              <p>Created by {recipe.creator}. </p>
+              {recipe.creator && <p>Created by {recipe.creator}.</p>}
             </div>
           );
         })}

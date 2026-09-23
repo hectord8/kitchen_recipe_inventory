@@ -76,8 +76,7 @@ export default function CreateAccount() {
             <h2>Account created!</h2>
             <p>You can now log in with your new account.</p>
             <p className={styles.redirect}>
-              Redirecting to{" "}
-              <Link href="/login">login page</Link>…
+              Redirecting to <Link href="/login">login page</Link>…
             </p>
           </div>
         </main>

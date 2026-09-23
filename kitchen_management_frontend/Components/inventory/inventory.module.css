@@ -31,7 +31,6 @@
   margin: 24px auto;
   border-radius: 2px;
   padding: 16px;
-  justify-items: center;
   overflow-x: auto;
 }
 
@@ -57,23 +56,19 @@
   gap: 12px;
 }
 
-.tableHeaders {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  border: 1px grey solid;
+.tableHeaders th {
+  text-align: left;
+  font-weight: 600;
   padding: 8px 12px;
+  border: 1px solid grey;
+  background: rgba(0, 0, 0, 0.05);
 }
 
-.card {
-  width: 100%;
+.card td {
   padding: 12px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
   border: 1px solid grey;
   border-top: none;
+  vertical-align: middle;
 }
 
 @media (max-width: 700px) {
