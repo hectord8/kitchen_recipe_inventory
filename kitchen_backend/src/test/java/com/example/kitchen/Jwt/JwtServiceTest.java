@@ -47,8 +47,7 @@ class JwtServiceTest {
 
   @Test
   void includesExtraClaims() {
-    String token =
-        jwtService.generateToken("user@example.com", Map.of("id", 42, "role", "ADMIN"));
+    String token = jwtService.generateToken("user@example.com", Map.of("id", 42, "role", "ADMIN"));
     var claims = jwtService.parseClaims(token);
     assertEquals(42, claims.get("id"));
     assertEquals("ADMIN", claims.get("role"));

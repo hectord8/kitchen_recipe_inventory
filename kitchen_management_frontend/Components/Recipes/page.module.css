@@ -67,6 +67,8 @@
 .card {
   background-color: var(--color-bg-card-alt);
   min-height: 320px;
+  max-height: 480px;
+  overflow-y: auto;
   padding: 16px;
   border-radius: var(--radius-sm);
   display: flex;

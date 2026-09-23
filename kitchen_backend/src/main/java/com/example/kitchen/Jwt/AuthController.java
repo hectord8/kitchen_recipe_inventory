@@ -49,8 +49,7 @@ public class AuthController {
       if (!ok) return ResponseEntity.status(401).body("Invalid login (wrong password)");
 
       String token =
-          jwtService.generateToken(
-              db.getEmail(), Map.of("id", db.getId(), "role", db.getRole()));
+          jwtService.generateToken(db.getEmail(), Map.of("id", db.getId(), "role", db.getRole()));
       db.setPassword(null);
 
       Cookie cookie = new Cookie("token", token);

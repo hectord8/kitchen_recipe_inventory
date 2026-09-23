@@ -5,7 +5,4 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/recipes/random")
-public class spoonacularController {
-
-
-}
+public class spoonacularController {}

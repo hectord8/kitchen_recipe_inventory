@@ -13,7 +13,8 @@ class AuthControllerTest {
 
   private final CustomerDAO customerDao = mock(CustomerDAO.class);
   private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-  private final JwtService jwtService = new JwtService("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", 60);
+  private final JwtService jwtService =
+      new JwtService("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", 60);
 
   @Test
   void loginValidatesPassword() {

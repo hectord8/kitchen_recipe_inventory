@@ -23,8 +23,7 @@ class GlobalExceptionHandlerTest {
     BeanPropertyBindingResult binding = new BeanPropertyBindingResult(null, "target");
     binding.addError(new FieldError("target", "email", "must be valid"));
 
-    MethodArgumentNotValidException ex =
-        new MethodArgumentNotValidException(null, binding);
+    MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, binding);
 
     ResponseEntity<Map<String, Object>> res = handler.handleValidation(ex);
     assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
