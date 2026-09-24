@@ -1,13 +1,36 @@
-Completed login in an sessions.
-Next i will start on the recicpes and food i hope to get a free api found this https://spoonacular.com/food-api/console/#Dashboard
-Then i hope to use some ai to scan the shopping recipes
+# Pantri — Frontend
 
-17/12/2025
-Completed favourite system used components so i can reuse the client side on both server pages all recipes and saved recipes
+Next.js 16 (App Router) + React 19 frontend for the Pantri kitchen recipe & inventory app.
 
-chosen Colour scheme
-#818479
-#b5cbb7
-#d2e4c4
-#e4e9b2
-#e7e08b
+See the [root README](../../README.md) for the full project (setup, env vars, API, deployment).
+
+## Scripts
+
+```bash
+npm ci          # install dependencies (Node 22, see .nvmrc)
+npm run dev     # local dev server
+npm run build   # production build
+npm run start   # serve the production build
+npm run lint    # ESLint
+npm run format  # Prettier --write .
+npm run format:check  # Prettier --check .
+```
+
+## Local setup
+
+Backend must be running (see root README). Create `.env.local`:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
+
+## Pages
+
+| Route          | Purpose                              |
+| -------------- | ------------------------------------ |
+| `/`            | Recipe library (search, filters, favorites) |
+| `/login`       | Sign in                              |
+| `/CreateAccount` | Register                            |
+| `/CreateRecipe` | Publish a recipe                    |
+| `/Inventory`   | Kitchen inventory                    |
+| `/admin`       | Admin                                |
